@@ -53,7 +53,7 @@ public class Board extends JPanel implements ActionListener {
 
         loadBackground();
 
-        setBackground(Color.BLACK);
+        setBackground(Color.black);
         setFocusable(true);
 
         spaceShip = new SpaceShip();
@@ -104,11 +104,11 @@ public class Board extends JPanel implements ActionListener {
 
         // * Draw the UI line
         int x1 = 0;
-        int y1 = 300;
+        int y1 = 305;
         int x2 = 450;
-        int y2 = 300;
+        int y2 = 305;
 
-        g.setColor(Color.WHITE);
+        g.setColor(Color.white);
         g.drawLine(x1, y1, x2, y2);
 
         // * Draw the game
@@ -152,7 +152,7 @@ public class Board extends JPanel implements ActionListener {
         }
 
         g.setColor(Color.WHITE);
-        g.drawString("Your score: " + score, 5, 320);
+        g.drawString("Your score: " + score, 5, 325);
     }
 
     /**

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpaceShip extends Sprite {
+    private static final int B_WIDTH = 450;
+    private static final int B_HEIGHT = 285;
+
     private int dx, dy;
     private List<Missile> missiles;
     private List<Particle> particles;
@@ -22,6 +25,22 @@ public class SpaceShip extends Sprite {
     public void move() {
         x += dx;
         y += dy;
+
+        if (x > B_WIDTH) {
+            x = 0;
+        }
+
+        if (x < 0) {
+            x = B_WIDTH - width;
+        }
+
+        if (y > B_HEIGHT) {
+            y = 0;
+        }
+
+        if (y < 0) {
+            y = B_HEIGHT - height;
+        }
 
         if (dx != 0 || dy != 0) {
             particles.add(new Particle(x, y + height / 2));
