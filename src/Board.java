@@ -23,10 +23,12 @@ public class Board extends JPanel implements ActionListener {
 
     private SpaceShip spaceShip;
     private List<Alien> aliens;
+
     private boolean ingame;
-    private boolean startScreen = true;
+    private boolean isGameStarted = false;
     private boolean pause = false;
     private int score = 0;
+
     private Timer timer;
 
     private int farBackgroundX = 0;
@@ -110,10 +112,16 @@ public class Board extends JPanel implements ActionListener {
         g.drawLine(x1, y1, x2, y2);
 
         // * Draw the game
-        if (ingame) {
-            doDrawing(g);
+        if (!isGameStarted) {
+            g.setColor(Color.black);
+            g.fillRect(0, 0, B_WIDTH, B_HEIGHT);
+            drawStartScreen(g);
         } else {
-            drawGameOver(g);
+            if (ingame) {
+                doDrawing(g);
+            } else {
+                drawGameOver(g);
+            }
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -155,7 +163,7 @@ public class Board extends JPanel implements ActionListener {
     private void drawGameOver(Graphics g) {
         String msg = "Game Over";
         String scoreMsg = "Your score: " + score;
-        String restartMsg = "Press ENTER to restart";
+        String restartMsg = "Press R to restart";
         Font small = new Font("Poppins", Font.BOLD, 14);
         FontMetrics fm = getFontMetrics(g.getFont());
 
@@ -167,17 +175,19 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void drawStartScreen(Graphics g) {
-        String instructions = "Use the arrow keys to move and SPACE to shoot";
+        String instructions = "Use the ARROW KEYS to move and SPACE to shoot";
         String pause = "Press P to pause";
         String msg = "Press ENTER to start";
         Font small = new Font("Poppins", Font.BOLD, 14);
-        FontMetrics fm = getFontMetrics(g.getFont());
+        FontMetrics fmI = getFontMetrics(g.getFont());
+        FontMetrics fmP = getFontMetrics(g.getFont());
+        FontMetrics fmM = getFontMetrics(g.getFont());
 
         g.setColor(Color.white);
         g.setFont(small);
-        g.drawString(instructions, (B_WIDTH - fm.stringWidth(instructions)) / 2, B_HEIGHT / 2 - 20);
-        g.drawString(pause, (B_WIDTH - fm.stringWidth(pause)) / 2, B_HEIGHT / 2);
-        g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2, B_HEIGHT / 2);
+        g.drawString(instructions, (B_WIDTH - fmI.stringWidth(instructions)) / 3, B_HEIGHT / 2 - 20);
+        g.drawString(pause, (B_WIDTH - fmP.stringWidth(pause)) / 2, B_HEIGHT / 2);
+        g.drawString(msg, (B_WIDTH - fmM.stringWidth(msg)) / 2, B_HEIGHT / 2 + 20);
     }
 
     /**
@@ -187,21 +197,24 @@ public class Board extends JPanel implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        ingame();
 
-        updateSpaceShip();
+        if (isGameStarted) {
+            ingame();
 
-        updateMissiles();
+            updateSpaceShip();
 
-        updateAliens();
+            updateMissiles();
 
-        updateParticles();
+            updateAliens();
 
-        checkCollisions();
+            updateParticles();
 
-        farBackgroundX -= 1;
-        midBackgroundX -= 2;
-        foregroundX -= 3;
+            checkCollisions();
+
+            farBackgroundX -= 1;
+            midBackgroundX -= 2;
+            foregroundX -= 3;
+        }
 
         if (farBackgroundX == -B_WIDTH) {
             farBackgroundX = 0;
@@ -357,7 +370,9 @@ public class Board extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
 
-            if (key == KeyEvent.VK_ENTER) {
+            if (key == KeyEvent.VK_ENTER && !isGameStarted) {
+                isGameStarted = true;
+            } else if (key == KeyEvent.VK_R && !ingame) {
                 restart();
             } else if (key == KeyEvent.VK_P) {
                 pause();
@@ -373,12 +388,10 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * TODO - Add a start screen
      * TODO - Adjust alien spawning and spawning rate
      * TODO - Fix the players movement
      * TODO - Fix the UI
      * TODO - Add a lives system
      * TODO - Fix the particles
-     * TODO - Create github repo
      */
 }
