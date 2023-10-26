@@ -24,6 +24,8 @@ public class Board extends JPanel implements ActionListener {
     private SpaceShip spaceShip;
     private List<Alien> aliens;
     private boolean ingame;
+    private boolean startScreen = true;
+    private boolean pause = false;
     private int score = 0;
     private Timer timer;
 
@@ -162,6 +164,20 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2, B_HEIGHT / 2);
         g.drawString(scoreMsg, (B_WIDTH - fm.stringWidth(scoreMsg)) / 2, B_HEIGHT / 2 + 20);
         g.drawString(restartMsg, (B_WIDTH - fm.stringWidth(restartMsg)) / 2, B_HEIGHT / 2 + 40);
+    }
+
+    private void drawStartScreen(Graphics g) {
+        String instructions = "Use the arrow keys to move and SPACE to shoot";
+        String pause = "Press P to pause";
+        String msg = "Press ENTER to start";
+        Font small = new Font("Poppins", Font.BOLD, 14);
+        FontMetrics fm = getFontMetrics(g.getFont());
+
+        g.setColor(Color.white);
+        g.setFont(small);
+        g.drawString(instructions, (B_WIDTH - fm.stringWidth(instructions)) / 2, B_HEIGHT / 2 - 20);
+        g.drawString(pause, (B_WIDTH - fm.stringWidth(pause)) / 2, B_HEIGHT / 2);
+        g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2, B_HEIGHT / 2);
     }
 
     /**
@@ -323,14 +339,30 @@ public class Board extends JPanel implements ActionListener {
         timer.start();
     }
 
+    /**
+     * Pause the game
+     */
+    private void pause() {
+        if (pause) {
+            timer.start();
+        } else {
+            timer.stop();
+        }
+        pause = !pause;
+    }
+
     // * Key events
     private class TAdapter extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
-            if (key == KeyEvent.VK_ENTER && !ingame) {
+
+            if (key == KeyEvent.VK_ENTER) {
                 restart();
+            } else if (key == KeyEvent.VK_P) {
+                pause();
             }
+
             spaceShip.keyPressed(e);
         }
 
@@ -341,7 +373,6 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * TODO - Add a pause button
      * TODO - Add a start screen
      * TODO - Adjust alien spawning and spawning rate
      * TODO - Fix the players movement
