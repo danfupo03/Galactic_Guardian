@@ -23,11 +23,16 @@ public class Board extends JPanel implements ActionListener {
 
     private SpaceShip spaceShip;
     private List<Alien> aliens;
+    private List<Heart> hearts;
 
     private boolean ingame;
     private boolean isGameStarted = false;
     private boolean pause = false;
     private int score = 0;
+    private int lives = 3;
+
+    private int heartX = 100;
+    private int heartY = 325;
 
     private Timer timer;
 
@@ -59,6 +64,13 @@ public class Board extends JPanel implements ActionListener {
         spaceShip = new SpaceShip();
 
         aliens = new ArrayList<Alien>();
+
+        hearts = new ArrayList<Heart>();
+
+        for (int i = 0; i < lives; i++) {
+            hearts.add(new Heart(heartX, heartY));
+            heartX += 20;
+        }
 
         ingame = true;
 
@@ -137,6 +149,10 @@ public class Board extends JPanel implements ActionListener {
             g.drawImage(spaceShip.getImage(), spaceShip.getX(), spaceShip.getY(), null);
         }
 
+        for (Heart heart : hearts) {
+            g.drawImage(heart.getImage(), heart.getX(), heart.getY(), null);
+        }
+
         List<Missile> missiles = spaceShip.getMissiles();
         for (Missile missile : missiles) {
             g.drawImage(missile.getImage(), missile.getX(), missile.getY(), null);
@@ -153,6 +169,9 @@ public class Board extends JPanel implements ActionListener {
 
         g.setColor(Color.WHITE);
         g.drawString("Your score: " + score, 5, 325);
+
+        g.setColor(Color.WHITE);
+        g.drawString("Lives: " + lives, 100, 325);
     }
 
     /**
@@ -208,6 +227,8 @@ public class Board extends JPanel implements ActionListener {
             updateAliens();
 
             updateParticles();
+
+            updateLives();
 
             checkCollisions();
 
@@ -299,6 +320,18 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    private void updateLives() {
+        if (lives == 0) {
+            ingame = false;
+        } else if (lives < hearts.size()) {
+            hearts.remove(hearts.size() - 1);
+        }
+    }
+
+    private void resetPlayer() {
+        spaceShip = new SpaceShip();
+    }
+
     // * Collisions
 
     /**
@@ -313,7 +346,10 @@ public class Board extends JPanel implements ActionListener {
             if (rSpaceShip.intersects(rAlien)) {
                 spaceShip.setVisible(false);
                 alien.setVisible(false);
-                ingame = false;
+                lives -= 1;
+                if (lives > 0) {
+                    resetPlayer();
+                }
             }
         }
 
@@ -347,9 +383,16 @@ public class Board extends JPanel implements ActionListener {
     private void restart() {
         spaceShip = new SpaceShip();
         aliens = new ArrayList<Alien>();
+        hearts = new ArrayList<Heart>();
         ingame = true;
         score = 0;
+        lives = 3;
         timer.start();
+
+        for (int i = 0; i < lives; i++) {
+            hearts.add(new Heart(heartX, heartY));
+            heartX += 20;
+        }
     }
 
     /**
@@ -389,9 +432,9 @@ public class Board extends JPanel implements ActionListener {
 
     /**
      * TODO - Adjust alien spawning and spawning rate
-     * TODO - Fix the players movement
      * TODO - Fix the UI
-     * TODO - Add a lives system
      * TODO - Fix the particles
+     * TODO - Music
+     * TODO - Add Game Sounds
      */
 }
