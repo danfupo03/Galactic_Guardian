@@ -66,15 +66,15 @@ public class Board extends JPanel implements ActionListener {
      * Load background images
      */
     private void loadBackground() {
-        ImageIcon farBackgroundIcon = new ImageIcon("images/spr_starfield_0.png");
+        ImageIcon farBackgroundIcon = new ImageIcon("assets/images/spr_starfield_0.png");
         farBackground = farBackgroundIcon.getImage();
         farBackground = farBackground.getScaledInstance(B_WIDTH, B_HEIGHT, Image.SCALE_DEFAULT);
 
-        ImageIcon midBackgroundIcon = new ImageIcon("images/spr_starfield_1.png");
+        ImageIcon midBackgroundIcon = new ImageIcon("assets/images/spr_starfield_1.png");
         midBackground = midBackgroundIcon.getImage();
         midBackground = midBackground.getScaledInstance(B_WIDTH, B_HEIGHT, Image.SCALE_DEFAULT);
 
-        ImageIcon foregroundIcon = new ImageIcon("images/spr_starfield_2.png");
+        ImageIcon foregroundIcon = new ImageIcon("assets/images/spr_starfield_2.png");
         foreground = foregroundIcon.getImage();
         foreground = foreground.getScaledInstance(B_WIDTH, B_HEIGHT, Image.SCALE_DEFAULT);
     }

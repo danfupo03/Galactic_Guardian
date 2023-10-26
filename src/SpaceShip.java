@@ -15,7 +15,7 @@ public class SpaceShip extends Sprite {
     }
 
     public void loadImage() {
-        ImageIcon ii = new ImageIcon("images/craft.png");
+        ImageIcon ii = new ImageIcon("assets/images/craft.png");
         image = ii.getImage();
     }
 

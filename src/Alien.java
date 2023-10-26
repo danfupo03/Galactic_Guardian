@@ -8,7 +8,7 @@ public class Alien extends Sprite {
     }
 
     public void loadImage() {
-        ImageIcon ii = new ImageIcon("images/alien.png");
+        ImageIcon ii = new ImageIcon("assets/images/alien.png");
         image = ii.getImage();
     }
 

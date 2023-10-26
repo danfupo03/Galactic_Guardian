@@ -11,7 +11,7 @@ public class Particle extends Sprite {
 
     @Override
     public void loadImage() {
-        ImageIcon ii = new ImageIcon("images/spr_exhaust.png");
+        ImageIcon ii = new ImageIcon("assets/images/particles.png");
         image = ii.getImage();
 
         int nWidth = image.getWidth(null) / 2;

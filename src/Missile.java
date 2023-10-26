@@ -10,7 +10,7 @@ public class Missile extends Sprite {
 
     @Override
     public void loadImage() {
-        ImageIcon ii = new ImageIcon("images/missile.png");
+        ImageIcon ii = new ImageIcon("assets/images/missile.png");
         image = ii.getImage();
     }
 
