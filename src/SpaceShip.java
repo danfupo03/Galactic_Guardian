@@ -9,6 +9,7 @@ public class SpaceShip extends Sprite {
 
     private int dx, dy;
     private List<Missile> missiles;
+    Sound sound = new Sound();
 
     private List<Particle> particles;
     private int particleLife = 10;
@@ -111,5 +112,7 @@ public class SpaceShip extends Sprite {
 
     public void fire() {
         missiles.add(new Missile(x + width, y + height / 2));
+        sound.setFile(5);
+        sound.play();
     }
 }

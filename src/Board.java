@@ -24,6 +24,7 @@ public class Board extends JPanel implements ActionListener {
     private SpaceShip spaceShip;
     private List<Alien> aliens;
     private List<Heart> hearts;
+    Sound sound = new Sound();
 
     private boolean ingame;
     private boolean isGameStarted = false;
@@ -211,6 +212,23 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(instructions, (B_WIDTH - fmI.stringWidth(instructions)) / 3, B_HEIGHT / 2 - 20);
         g.drawString(pause, (B_WIDTH - fmP.stringWidth(pause)) / 2, B_HEIGHT / 2);
         g.drawString(msg, (B_WIDTH - fmM.stringWidth(msg)) / 2, B_HEIGHT / 2 + 20);
+
+        //playMusic(1);
+    }
+
+    public void playMusic(int i) {
+        sound.setFile(i);
+        sound.play();
+        sound.loop();
+    }
+
+    public void stopMusic() {
+        sound.stop();
+    }
+
+    public void playSE(int i) {
+        sound.setFile(i);
+        sound.play();
     }
 
     /**
