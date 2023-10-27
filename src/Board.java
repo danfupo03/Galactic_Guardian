@@ -30,6 +30,7 @@ public class Board extends JPanel implements ActionListener {
     private boolean pause = false;
     private int score = 0;
     private int lives = 3;
+    private int alienCount = 5;
 
     private int heartX = 140;
     private int heartY = 311;
@@ -191,6 +192,11 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(restartMsg, (B_WIDTH - fm.stringWidth(restartMsg)) / 2, B_HEIGHT / 2 + 40);
     }
 
+    /**
+     * Draw the start screen
+     * 
+     * @param g
+     */
     private void drawStartScreen(Graphics g) {
         String instructions = "Use the ARROW KEYS to move and SPACE to shoot";
         String pause = "Press P to pause";
@@ -311,9 +317,9 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
-        while (aliens.size() < 5) {
+        while (aliens.size() < alienCount) {
             int randomX = B_WIDTH + (int) (Math.random() * B_WIDTH);
-            int randomY = (int) (Math.random() * B_HEIGHT);
+            int randomY = 5 + (int) (Math.random() * 281);
             aliens.add(new Alien(randomX, randomY));
         }
     }
@@ -361,6 +367,10 @@ public class Board extends JPanel implements ActionListener {
                     missile.setVisible(false);
                     alien.setVisible(false);
                     score += 1;
+
+                    if(score % 10 == 0) {
+                        alienCount += 5;
+                    }
                 }
             }
         }

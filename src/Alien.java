@@ -1,7 +1,7 @@
 import javax.swing.ImageIcon;
 
 public class Alien extends Sprite {
-    private static final int INITIAL_X = 400;
+    private static final int INITIAL_X = 450;
 
     public Alien(int x, int y) {
         super(x, y);
