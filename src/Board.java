@@ -31,8 +31,8 @@ public class Board extends JPanel implements ActionListener {
     private int score = 0;
     private int lives = 3;
 
-    private int heartX = 100;
-    private int heartY = 325;
+    private int heartX = 140;
+    private int heartY = 311;
 
     private Timer timer;
 
@@ -62,9 +62,7 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);
 
         spaceShip = new SpaceShip();
-
         aliens = new ArrayList<Alien>();
-
         hearts = new ArrayList<Heart>();
 
         for (int i = 0; i < lives; i++) {
@@ -171,7 +169,7 @@ public class Board extends JPanel implements ActionListener {
         g.drawString("Your score: " + score, 5, 325);
 
         g.setColor(Color.WHITE);
-        g.drawString("Lives: " + lives, 100, 325);
+        g.drawString("Lives:", 100, 325);
     }
 
     /**
@@ -389,6 +387,9 @@ public class Board extends JPanel implements ActionListener {
         lives = 3;
         timer.start();
 
+        heartX = 140;
+        heartY = 311;
+
         for (int i = 0; i < lives; i++) {
             hearts.add(new Heart(heartX, heartY));
             heartX += 20;
@@ -432,7 +433,6 @@ public class Board extends JPanel implements ActionListener {
 
     /**
      * TODO - Adjust alien spawning and spawning rate
-     * TODO - Fix the UI
      * TODO - Fix the particles
      * TODO - Music
      * TODO - Add Game Sounds
