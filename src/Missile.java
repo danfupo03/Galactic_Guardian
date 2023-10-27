@@ -1,3 +1,11 @@
+/*----------------------------------------------------------------
+*
+* Missile.java
+* Fecha: 27-Oct-2023
+* Autor: Daniel Emilio Fuentes - A01708302
+*
+*--------------------------------------------------------------*/
+
 import javax.swing.ImageIcon;
 
 public class Missile extends Sprite {

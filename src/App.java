@@ -1,3 +1,11 @@
+/*----------------------------------------------------------------
+*
+* App.java
+* Fecha: 27-Oct-2023
+* Autor: Daniel Emilio Fuentes - A01708302
+*
+*--------------------------------------------------------------*/
+
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 
