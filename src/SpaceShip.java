@@ -9,7 +9,11 @@ public class SpaceShip extends Sprite {
 
     private int dx, dy;
     private List<Missile> missiles;
+
     private List<Particle> particles;
+    private int particleLife = 10;
+    private int particleIndex = 0;
+    private int particleCounter = 0;
 
     public SpaceShip() {
         super(40, 50);
@@ -43,8 +47,22 @@ public class SpaceShip extends Sprite {
         }
 
         if (dx != 0 || dy != 0) {
-            particles.add(new Particle(x, y + height / 2));
+            addParticle();
         }
+    }
+
+    public void addParticle() {
+        particles.add(new Particle(x, y + height / 2 - 3, particleLife, particleIndex));
+        particleCounter++;
+
+        if (particleCounter >= 5) {
+            particleCounter = 0;
+            particleIndex++;
+            if (particleIndex > 2) {
+                particleIndex = 0;
+            }
+        }
+
     }
 
     public List<Missile> getMissiles() {

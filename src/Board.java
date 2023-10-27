@@ -442,8 +442,6 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * TODO - Adjust alien spawning and spawning rate
-     * TODO - Fix the particles
      * TODO - Music
      * TODO - Add Game Sounds
      */
