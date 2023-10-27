@@ -112,7 +112,7 @@ public class SpaceShip extends Sprite {
 
     public void fire() {
         missiles.add(new Missile(x + width, y + height / 2));
-        sound.setFile(5);
+        sound.setFile(7);
         sound.play();
     }
 }

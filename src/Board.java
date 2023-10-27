@@ -191,6 +191,8 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2, B_HEIGHT / 2);
         g.drawString(scoreMsg, (B_WIDTH - fm.stringWidth(scoreMsg)) / 2, B_HEIGHT / 2 + 20);
         g.drawString(restartMsg, (B_WIDTH - fm.stringWidth(restartMsg)) / 2, B_HEIGHT / 2 + 40);
+
+        playSE(2);
     }
 
     /**
@@ -202,30 +204,46 @@ public class Board extends JPanel implements ActionListener {
         String instructions = "Use the ARROW KEYS to move and SPACE to shoot";
         String pause = "Press P to pause";
         String msg = "Press ENTER to start";
+        String title = "Galactic Guardian";
+
         Font small = new Font("Poppins", Font.BOLD, 14);
-        FontMetrics fmI = getFontMetrics(g.getFont());
-        FontMetrics fmP = getFontMetrics(g.getFont());
-        FontMetrics fmM = getFontMetrics(g.getFont());
+        Font large = new Font("Joystix", Font.BOLD, 20);
+
+        FontMetrics fmSmall = getFontMetrics(small);
+        FontMetrics fmLarge = getFontMetrics(large);
 
         g.setColor(Color.white);
         g.setFont(small);
-        g.drawString(instructions, (B_WIDTH - fmI.stringWidth(instructions)) / 3, B_HEIGHT / 2 - 20);
-        g.drawString(pause, (B_WIDTH - fmP.stringWidth(pause)) / 2, B_HEIGHT / 2);
-        g.drawString(msg, (B_WIDTH - fmM.stringWidth(msg)) / 2, B_HEIGHT / 2 + 20);
+        g.drawString(instructions, (B_WIDTH - fmSmall.stringWidth(instructions)) / 2, B_HEIGHT / 2);
+        g.drawString(pause, (B_WIDTH - fmSmall.stringWidth(pause)) / 2, B_HEIGHT / 2 - 20);
+        g.drawString(msg, (B_WIDTH - fmSmall.stringWidth(msg)) / 2, B_HEIGHT / 2 + 40);
 
-        //playMusic(1);
+        g.setColor(Color.red);
+        g.setFont(large);
+        g.drawString(title, (B_WIDTH - fmLarge.stringWidth(title)) / 2, B_HEIGHT / 2 - 60);
     }
 
+    /**
+     * Play the music
+     * @param i
+     */
     public void playMusic(int i) {
         sound.setFile(i);
         sound.play();
         sound.loop();
     }
 
+    /**
+     * Stop the music
+     */
     public void stopMusic() {
         sound.stop();
     }
 
+    /**
+     * Play the sound effect
+     * @param i
+     */
     public void playSE(int i) {
         sound.setFile(i);
         sound.play();
@@ -369,6 +387,8 @@ public class Board extends JPanel implements ActionListener {
                 spaceShip.setVisible(false);
                 alien.setVisible(false);
                 lives -= 1;
+                playSE(3);
+
                 if (lives > 0) {
                     resetPlayer();
                 }
@@ -385,8 +405,9 @@ public class Board extends JPanel implements ActionListener {
                     missile.setVisible(false);
                     alien.setVisible(false);
                     score += 1;
+                    playSE(4);
 
-                    if(score % 10 == 0) {
+                    if (score % 10 == 0) {
                         alienCount += 5;
                     }
                 }
@@ -430,7 +451,9 @@ public class Board extends JPanel implements ActionListener {
     private void pause() {
         if (pause) {
             timer.start();
+            playSE(6);
         } else {
+            playSE(5);
             timer.stop();
         }
         pause = !pause;
@@ -460,7 +483,6 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * TODO - Music
-     * TODO - Add Game Sounds
+     * TODO - Add music
      */
 }
