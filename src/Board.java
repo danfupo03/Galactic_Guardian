@@ -233,6 +233,7 @@ public class Board extends JPanel implements ActionListener {
 
     /**
      * Play the music
+     * 
      * @param i
      */
     public void playMusic(int i) {
@@ -250,6 +251,7 @@ public class Board extends JPanel implements ActionListener {
 
     /**
      * Play the sound effect
+     * 
      * @param i
      */
     public void playSE(int i) {
@@ -368,6 +370,9 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Update the lives
+     */
     private void updateLives() {
         if (lives == 0) {
             ingame = false;
@@ -376,6 +381,9 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Reset the player
+     */
     private void resetPlayer() {
         spaceShip = new SpaceShip();
     }
@@ -456,7 +464,23 @@ public class Board extends JPanel implements ActionListener {
     /**
      * Pause the game
      */
-    private void pause() {
+    private void pause(Graphics g) {
+        String msg = "Paused";
+        String instructions = "Press P to resume";
+
+        Font s = new Font("Poppins", Font.BOLD, 14);
+        Font i = new Font("Poppins", Font.BOLD, 10);
+
+        FontMetrics fms = getFontMetrics(g.getFont());
+        FontMetrics fmi = getFontMetrics(g.getFont());
+
+        g.setColor(Color.WHITE);
+
+        g.setFont(s);
+        g.drawString(msg, (B_WIDTH - fms.stringWidth(msg)) / 2, B_HEIGHT / 2);
+        g.setFont(i);
+        g.drawString(instructions, (B_WIDTH - fmi.stringWidth(instructions)) / 2 + 12, B_HEIGHT / 2 + 20);
+
         if (pause) {
             timer.start();
             playSE(6);
@@ -478,7 +502,7 @@ public class Board extends JPanel implements ActionListener {
             } else if (key == KeyEvent.VK_R && !ingame) {
                 restart();
             } else if (key == KeyEvent.VK_P) {
-                pause();
+                pause(getGraphics());
             }
 
             spaceShip.keyPressed(e);
