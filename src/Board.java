@@ -448,6 +448,7 @@ public class Board extends JPanel implements ActionListener {
         aliens = new ArrayList<Alien>();
         hearts = new ArrayList<Heart>();
         ingame = true;
+        alienCount = 5;
         score = 0;
         lives = 3;
         timer.start();
