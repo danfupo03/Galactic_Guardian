@@ -516,6 +516,6 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * TODO - Add music
+     * TODO - Add power ups
      */
 }
