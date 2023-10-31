@@ -7,6 +7,7 @@
 *--------------------------------------------------------------*/
 
 import javax.swing.ImageIcon;
+import java.awt.Image;
 
 public class Heart extends Sprite {
     public Heart(int x, int y) {
@@ -14,7 +15,10 @@ public class Heart extends Sprite {
     }
 
     public void loadImage() {
-        ImageIcon ii = new ImageIcon("assets/images/craft.png");
+        ImageIcon ii = new ImageIcon("assets/images/heart.png");
         image = ii.getImage();
+
+        Image resizedImage = image.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
+        image = resizedImage;
     }
 }

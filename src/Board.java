@@ -41,8 +41,8 @@ public class Board extends JPanel implements ActionListener {
     private int lives = 3;
     private int alienCount = 5;
 
-    private int heartX = 140;
-    private int heartY = 311;
+    private int heartX = 135;
+    private int heartY = 306;
 
     private Timer timer;
 
