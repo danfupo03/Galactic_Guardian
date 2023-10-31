@@ -31,15 +31,23 @@ public class Board extends JPanel implements ActionListener {
 
     private SpaceShip spaceShip;
     private List<Alien> aliens;
+
+    private List<Shield> shields;
+    private List<Fire> fires;
+    private List<Bomb> bombs;
     private List<Heart> hearts;
+
     Sound sound = new Sound();
 
     private boolean ingame;
     private boolean isGameStarted = false;
     private boolean pause = false;
+
     private int score = 0;
     private int lives = 3;
     private int alienCount = 5;
+
+    private boolean isPlayerInmune = false;
 
     private int heartX = 135;
     private int heartY = 306;
@@ -74,6 +82,9 @@ public class Board extends JPanel implements ActionListener {
         spaceShip = new SpaceShip();
         aliens = new ArrayList<Alien>();
         hearts = new ArrayList<Heart>();
+        shields = new ArrayList<Shield>();
+        fires = new ArrayList<Fire>();
+        bombs = new ArrayList<Bomb>();
 
         for (int i = 0; i < lives; i++) {
             hearts.add(new Heart(heartX, heartY));
@@ -144,6 +155,33 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
+        if (spaceShip.isVisible()) {
+            g.setColor(Color.RED);
+            Rectangle rSpaceShip = spaceShip.getBounds();
+            g.drawRect(rSpaceShip.x, rSpaceShip.y, rSpaceShip.width, rSpaceShip.height);
+            g.drawImage(spaceShip.getImage(), spaceShip.getX(), spaceShip.getY(), null);
+        }
+
+        // * Dibujar la caja de colisión de los aliens en rojo
+        for (Alien alien : aliens) {
+            if (alien.isVisible()) {
+                g.setColor(Color.RED);
+                Rectangle rAlien = alien.getBounds();
+                g.drawRect(rAlien.x, rAlien.y, rAlien.width, rAlien.height);
+                g.drawImage(alien.getImage(), alien.getX(), alien.getY(), null);
+            }
+        }
+
+        // * Dibujar la caja de colisión de los escudos en rojo
+        for (Shield shield : shields) {
+            if (shield.isVisible()) {
+                g.setColor(Color.RED);
+                Rectangle rShield = shield.getBounds();
+                g.drawRect(rShield.x, rShield.y, rShield.width, rShield.height);
+                g.drawImage(shield.getImage(), shield.getX(), shield.getY(), null);
+            }
+        }
+
         Toolkit.getDefaultToolkit().sync();
     }
 
@@ -173,6 +211,18 @@ public class Board extends JPanel implements ActionListener {
 
         for (Alien alien : aliens) {
             g.drawImage(alien.getImage(), alien.getX(), alien.getY(), null);
+        }
+
+        for (Shield shield : shields) {
+            g.drawImage(shield.getImage(), shield.getX(), shield.getY(), null);
+        }
+
+        for (Fire fire : fires) {
+            g.drawImage(fire.getImage(), fire.getX(), fire.getY(), null);
+        }
+
+        for (Bomb bomb : bombs) {
+            g.drawImage(bomb.getImage(), bomb.getX(), bomb.getY(), null);
         }
 
         g.setColor(Color.WHITE);
@@ -280,6 +330,10 @@ public class Board extends JPanel implements ActionListener {
 
             updateLives();
 
+            updateShields();
+            // updateFire();
+            // updateBombs();
+
             checkCollisions();
 
             farBackgroundX -= 1;
@@ -371,6 +425,60 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
+     * Update the shields
+     */
+    private void updateShields() {
+        ListIterator<Shield> itr = shields.listIterator();
+        while (itr.hasNext()) {
+            Shield shield = itr.next();
+            if (shield.isVisible()) {
+                shield.move();
+                if (shield.getX() < 0) {
+                    itr.remove();
+                }
+            } else {
+                itr.remove();
+            }
+        }
+    }
+
+    // private void updateBombs() {
+    // ListIterator<Alien> itr = aliens.listIterator();
+    // while (itr.hasNext()) {
+    // Alien alien = itr.next();
+    // if (alien.isVisible()) {
+    // alien.move();
+    // } else {
+    // itr.remove();
+    // }
+    // }
+
+    // while (aliens.size() < alienCount) {
+    // int randomX = B_WIDTH + (int) (Math.random() * B_WIDTH);
+    // int randomY = 5 + (int) (Math.random() * 281);
+    // aliens.add(new Alien(randomX, randomY));
+    // }
+    // }
+
+    // private void updateFire() {
+    // ListIterator<Alien> itr = aliens.listIterator();
+    // while (itr.hasNext()) {
+    // Alien alien = itr.next();
+    // if (alien.isVisible()) {
+    // alien.move();
+    // } else {
+    // itr.remove();
+    // }
+    // }
+
+    // while (aliens.size() < alienCount) {
+    // int randomX = B_WIDTH + (int) (Math.random() * B_WIDTH);
+    // int randomY = 5 + (int) (Math.random() * 281);
+    // aliens.add(new Alien(randomX, randomY));
+    // }
+    // }
+
+    /**
      * Update the lives
      */
     private void updateLives() {
@@ -394,40 +502,60 @@ public class Board extends JPanel implements ActionListener {
      * Check for collisions
      */
     private void checkCollisions() {
-        Rectangle rSpaceShip = spaceShip.getBounds();
 
-        // * Check for collisions between the space ship and the aliens
-        for (Alien alien : aliens) {
-            Rectangle rAlien = alien.getBounds();
-            if (rSpaceShip.intersects(rAlien)) {
-                spaceShip.setVisible(false);
-                alien.setVisible(false);
-                lives -= 1;
-                playSE(3);
+        if (!isPlayerInmune) {
 
-                if (lives > 0) {
-                    resetPlayer();
-                }
-            }
-        }
+            Rectangle rSpaceShip = spaceShip.getBounds();
 
-        // * Check for collisions between the missiles and the aliens
-        List<Missile> missiles = spaceShip.getMissiles();
-        for (Missile missile : missiles) {
-            Rectangle rMissile = missile.getBounds();
+            // * Check for collisions between the space ship and the aliens
             for (Alien alien : aliens) {
                 Rectangle rAlien = alien.getBounds();
-                if (rMissile.intersects(rAlien)) {
-                    missile.setVisible(false);
+                if (rSpaceShip.intersects(rAlien)) {
+                    spaceShip.setVisible(false);
                     alien.setVisible(false);
-                    score += 1;
-                    playSE(4);
+                    lives -= 1;
+                    playSE(3);
 
-                    if (score % 10 == 0) {
-                        alienCount += 5;
+                    if (lives > 0) {
+                        resetPlayer();
                     }
                 }
             }
+
+            // * Check for collisions between the missiles and the aliens
+            List<Missile> missiles = spaceShip.getMissiles();
+            for (Missile missile : missiles) {
+                Rectangle rMissile = missile.getBounds();
+                for (Alien alien : aliens) {
+                    Rectangle rAlien = alien.getBounds();
+                    if (rMissile.intersects(rAlien)) {
+                        missile.setVisible(false);
+                        alien.setVisible(false);
+                        score += 1;
+
+                        if (shields.isEmpty()) {
+                            shields.add(new Shield(alien.getX(), alien.getY()));
+                        }
+
+                        playSE(4);
+
+                        if (score % 10 == 0) {
+                            alienCount += 5;
+                        }
+                    }
+                }
+            }
+
+            // * Check for collisions between the space ship and the power ups
+            for (Shield shield : shields) {
+                Rectangle rShield = shield.getBounds();
+                if (rSpaceShip.intersects(rShield)) {
+                    shield.setVisible(false);
+                    createShield();
+                }
+            }
+
+            System.out.println("Shields: " + shields.size());
         }
     }
 
@@ -490,6 +618,21 @@ public class Board extends JPanel implements ActionListener {
             timer.stop();
         }
         pause = !pause;
+    }
+
+    private void createShield() {
+        isPlayerInmune = true;
+
+        Timer shieldTimer = new Timer(10000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isPlayerInmune = false;
+                ((Timer) e.getSource()).stop();
+            }
+        });
+
+        shieldTimer.setRepeats(false);
+        shieldTimer.start();
     }
 
     // * Key events
