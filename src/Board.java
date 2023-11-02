@@ -23,6 +23,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import javax.swing.ImageIcon;
+import java.util.Random;
 
 public class Board extends JPanel implements ActionListener {
     private static final int DELAY = 10;
@@ -47,8 +48,6 @@ public class Board extends JPanel implements ActionListener {
     private int lives = 3;
     private int alienCount = 5;
 
-    private boolean isPlayerInmune = false;
-
     private int heartX = 135;
     private int heartY = 306;
 
@@ -69,7 +68,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Initialize the UI
+     * Initialize the UI and the game itself
      */
     private void initUI() {
         addKeyListener(new TAdapter());
@@ -82,6 +81,7 @@ public class Board extends JPanel implements ActionListener {
         spaceShip = new SpaceShip();
         aliens = new ArrayList<Alien>();
         hearts = new ArrayList<Heart>();
+
         shields = new ArrayList<Shield>();
         fires = new ArrayList<Fire>();
         bombs = new ArrayList<Bomb>();
@@ -95,10 +95,12 @@ public class Board extends JPanel implements ActionListener {
 
         timer = new Timer(DELAY, this);
         timer.start();
+
+        playMusic(0);
     }
 
     /**
-     * Load background images
+     * Load the background images
      */
     private void loadBackground() {
         ImageIcon farBackgroundIcon = new ImageIcon("assets/images/spr_starfield_0.png");
@@ -114,6 +116,7 @@ public class Board extends JPanel implements ActionListener {
         foreground = foreground.getScaledInstance(B_WIDTH, B_HEIGHT, Image.SCALE_DEFAULT);
     }
 
+    /* #region Drawing Methods */
     /**
      * Paint the component
      * 
@@ -155,6 +158,7 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
+        // * Dibujar la caja de colisión de la nave en rojo
         if (spaceShip.isVisible()) {
             g.setColor(Color.RED);
             Rectangle rSpaceShip = spaceShip.getBounds();
@@ -172,6 +176,17 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
+        // * Dibujar la caja de colisión de los misiles en rojo
+        List<Missile> missiles = spaceShip.getMissiles();
+        for (Missile missile : missiles) {
+            if (missile.isVisible()) {
+                g.setColor(Color.RED);
+                Rectangle rMissile = missile.getBounds();
+                g.drawRect(rMissile.x, rMissile.y, rMissile.width, rMissile.height);
+                g.drawImage(missile.getImage(), missile.getX(), missile.getY(), null);
+            }
+        }
+
         // * Dibujar la caja de colisión de los escudos en rojo
         for (Shield shield : shields) {
             if (shield.isVisible()) {
@@ -179,6 +194,26 @@ public class Board extends JPanel implements ActionListener {
                 Rectangle rShield = shield.getBounds();
                 g.drawRect(rShield.x, rShield.y, rShield.width, rShield.height);
                 g.drawImage(shield.getImage(), shield.getX(), shield.getY(), null);
+            }
+        }
+
+        // * Dibujar la caja de colisión de los fuegos en rojo
+        for (Fire fire : fires) {
+            if (fire.isVisible()) {
+                g.setColor(Color.RED);
+                Rectangle rFire = fire.getBounds();
+                g.drawRect(rFire.x, rFire.y, rFire.width, rFire.height);
+                g.drawImage(fire.getImage(), fire.getX(), fire.getY(), null);
+            }
+        }
+
+        // * Dibujar la caja de colisión de las bombas en rojo
+        for (Bomb bomb : bombs) {
+            if (bomb.isVisible()) {
+                g.setColor(Color.RED);
+                Rectangle rBomb = bomb.getBounds();
+                g.drawRect(rBomb.x, rBomb.y, rBomb.width, rBomb.height);
+                g.drawImage(bomb.getImage(), bomb.getX(), bomb.getY(), null);
             }
         }
 
@@ -280,7 +315,9 @@ public class Board extends JPanel implements ActionListener {
         g.setFont(large);
         g.drawString(title, (B_WIDTH - fmLarge.stringWidth(title)) / 2, B_HEIGHT / 2 - 60);
     }
+    /* #endregion */
 
+    /* #region Sound Methods */
     /**
      * Play the music
      * 
@@ -308,6 +345,7 @@ public class Board extends JPanel implements ActionListener {
         sound.setFile(i);
         sound.play();
     }
+    /* #endregion */
 
     /**
      * Handle the action event
@@ -331,8 +369,8 @@ public class Board extends JPanel implements ActionListener {
             updateLives();
 
             updateShields();
-            // updateFire();
-            // updateBombs();
+            updateFires();
+            updateBombs();
 
             checkCollisions();
 
@@ -360,7 +398,7 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    // * Update the game state
+    /* #region Update methods */
 
     /**
      * Update the space ship
@@ -442,41 +480,41 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    // private void updateBombs() {
-    // ListIterator<Alien> itr = aliens.listIterator();
-    // while (itr.hasNext()) {
-    // Alien alien = itr.next();
-    // if (alien.isVisible()) {
-    // alien.move();
-    // } else {
-    // itr.remove();
-    // }
-    // }
+    /**
+     * Update the fires
+     */
+    private void updateFires() {
+        ListIterator<Fire> itr = fires.listIterator();
+        while (itr.hasNext()) {
+            Fire fire = itr.next();
+            if (fire.isVisible()) {
+                fire.move();
+                if (fire.getX() < 0) {
+                    itr.remove();
+                }
+            } else {
+                itr.remove();
+            }
+        }
+    }
 
-    // while (aliens.size() < alienCount) {
-    // int randomX = B_WIDTH + (int) (Math.random() * B_WIDTH);
-    // int randomY = 5 + (int) (Math.random() * 281);
-    // aliens.add(new Alien(randomX, randomY));
-    // }
-    // }
-
-    // private void updateFire() {
-    // ListIterator<Alien> itr = aliens.listIterator();
-    // while (itr.hasNext()) {
-    // Alien alien = itr.next();
-    // if (alien.isVisible()) {
-    // alien.move();
-    // } else {
-    // itr.remove();
-    // }
-    // }
-
-    // while (aliens.size() < alienCount) {
-    // int randomX = B_WIDTH + (int) (Math.random() * B_WIDTH);
-    // int randomY = 5 + (int) (Math.random() * 281);
-    // aliens.add(new Alien(randomX, randomY));
-    // }
-    // }
+    /**
+     * Update the bombs
+     */
+    private void updateBombs() {
+        ListIterator<Bomb> itr = bombs.listIterator();
+        while (itr.hasNext()) {
+            Bomb bomb = itr.next();
+            if (bomb.isVisible()) {
+                bomb.move();
+                if (bomb.getX() < 0) {
+                    itr.remove();
+                }
+            } else {
+                itr.remove();
+            }
+        }
+    }
 
     /**
      * Update the lives
@@ -496,6 +534,8 @@ public class Board extends JPanel implements ActionListener {
         spaceShip = new SpaceShip();
     }
 
+    /* #endregion */
+
     // * Collisions
 
     /**
@@ -503,62 +543,83 @@ public class Board extends JPanel implements ActionListener {
      */
     private void checkCollisions() {
 
-        if (!isPlayerInmune) {
+        Random random = new Random();
 
-            Rectangle rSpaceShip = spaceShip.getBounds();
+        Rectangle rSpaceShip = spaceShip.getBounds();
 
-            // * Check for collisions between the space ship and the aliens
+        // * Check for collisions between the space ship and the aliens
+        for (Alien alien : aliens) {
+            Rectangle rAlien = alien.getBounds();
+            if (rSpaceShip.intersects(rAlien)) {
+                spaceShip.setVisible(false);
+                alien.setVisible(false);
+                lives -= 1;
+                playSE(3);
+
+                if (lives > 0) {
+                    resetPlayer();
+                }
+            }
+        }
+
+        // * Check for collisions between the missiles and the aliens
+        List<Missile> missiles = spaceShip.getMissiles();
+        for (Missile missile : missiles) {
+            Rectangle rMissile = missile.getBounds();
             for (Alien alien : aliens) {
                 Rectangle rAlien = alien.getBounds();
-                if (rSpaceShip.intersects(rAlien)) {
-                    spaceShip.setVisible(false);
+                if (rMissile.intersects(rAlien)) {
+                    missile.setVisible(false);
                     alien.setVisible(false);
-                    lives -= 1;
-                    playSE(3);
+                    score += 1;
 
-                    if (lives > 0) {
-                        resetPlayer();
+                    if (shields.isEmpty() && fires.isEmpty() && bombs.isEmpty()) {
+                        if (random.nextInt(25) == 0) {
+                            int powerUp = random.nextInt(3);
+
+                            if (powerUp == 0) {
+                                shields.add(new Shield(alien.getX(), alien.getY()));
+                            } else if (powerUp == 1) {
+                                fires.add(new Fire(alien.getX(), alien.getY()));
+                            } else if (powerUp == 2) {
+                                bombs.add(new Bomb(alien.getX(), alien.getY()));
+                            }
+                        }
+                    }
+
+                    playSE(4);
+
+                    if (score % 10 == 0) {
+                        alienCount += 5;
                     }
                 }
             }
+        }
 
-            // * Check for collisions between the missiles and the aliens
-            List<Missile> missiles = spaceShip.getMissiles();
-            for (Missile missile : missiles) {
-                Rectangle rMissile = missile.getBounds();
-                for (Alien alien : aliens) {
-                    Rectangle rAlien = alien.getBounds();
-                    if (rMissile.intersects(rAlien)) {
-                        missile.setVisible(false);
-                        alien.setVisible(false);
-                        score += 1;
-
-                        if (shields.isEmpty()) {
-                            shields.add(new Shield(alien.getX(), alien.getY()));
-                        }
-
-                        playSE(4);
-
-                        if (score % 10 == 0) {
-                            alienCount += 5;
-                        }
-                    }
-                }
+        // * Check for collisions between the space ship and the power ups
+        for (Shield shield : shields) {
+            Rectangle rShield = shield.getResizedBounds();
+            if (rSpaceShip.intersects(rShield)) {
+                shield.setVisible(false);
             }
+        }
 
-            // * Check for collisions between the space ship and the power ups
-            for (Shield shield : shields) {
-                Rectangle rShield = shield.getBounds();
-                if (rSpaceShip.intersects(rShield)) {
-                    shield.setVisible(false);
-                    createShield();
-                }
+        for (Fire fire : fires) {
+            Rectangle rFire = fire.getResizedBounds();
+            if (rSpaceShip.intersects(rFire)) {
+                fire.setVisible(false);
             }
+        }
 
-            System.out.println("Shields: " + shields.size());
+        for (Bomb bomb : bombs) {
+            Rectangle rBomb = bomb.getResizedBounds();
+            if (rSpaceShip.intersects(rBomb)) {
+                bomb.setVisible(false);
+            }
         }
     }
 
+    /* #region Game logic methods */
     /**
      * Check if the game is still running
      */
@@ -619,21 +680,7 @@ public class Board extends JPanel implements ActionListener {
         }
         pause = !pause;
     }
-
-    private void createShield() {
-        isPlayerInmune = true;
-
-        Timer shieldTimer = new Timer(10000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isPlayerInmune = false;
-                ((Timer) e.getSource()).stop();
-            }
-        });
-
-        shieldTimer.setRepeats(false);
-        shieldTimer.start();
-    }
+    /* #endregion */
 
     // * Key events
     private class TAdapter extends KeyAdapter {
@@ -659,6 +706,11 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
+     * 
      * TODO - Add power ups
+     * TODO - Add particles to enemies
+     * TODO - Fix the aliens (The redrawing and the spawning when dying)
+     * TODO - Add a boss
+     * TODO - Level system
      */
 }
