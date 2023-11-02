@@ -18,7 +18,7 @@ public class Sound {
     URL soundURL[] = new URL[30];
 
     public Sound() {
-        soundURL[0] = getClass().getResource("assets/sounds/.wav");
+        soundURL[0] = getClass().getResource("assets/sounds/music.wav");
         soundURL[1] = getClass().getResource("assets/sounds/.wav");
         soundURL[2] = getClass().getResource("assets/sounds/gameOver.wav");
         soundURL[3] = getClass().getResource("assets/sounds/explosion.wav");
