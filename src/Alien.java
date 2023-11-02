@@ -23,7 +23,16 @@ public class Alien extends Sprite {
     public void move() {
         if (x < 0) {
             x = INITIAL_X;
+            y = 5 + (int) (Math.random() * 281);
         }
         x--;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this .y = y;
     }
 }

@@ -284,7 +284,6 @@ public class Board extends JPanel implements ActionListener {
         Font large = new Font("Joystix", Font.BOLD, 20);
         FontMetrics fm = getFontMetrics(g.getFont());
 
-
         g.setColor(Color.red);
         g.setFont(large);
         g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2 - 35, B_HEIGHT / 2 - 30);
@@ -551,6 +550,13 @@ public class Board extends JPanel implements ActionListener {
      */
     private void resetPlayer() {
         spaceShip = new SpaceShip();
+
+        if (lives >= 1) {
+            for (Alien alien : aliens) {
+                alien.setX(B_WIDTH + (int) (Math.random() * B_WIDTH));
+                alien.setY(5 + (int) (Math.random() * 281));
+            }
+        }
     }
 
     /**
@@ -752,8 +758,6 @@ public class Board extends JPanel implements ActionListener {
     /**
      * 
      * TODO - Add power ups logic
-     * TODO - Add particles to enemies
-     * TODO - Fix the aliens (The redrawing and the spawning when dying)
      * TODO - Add a boss
      */
 }
