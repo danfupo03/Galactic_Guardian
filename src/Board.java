@@ -47,6 +47,7 @@ public class Board extends JPanel implements ActionListener {
     private int score = 0;
     private int lives = 3;
     private int alienCount = 5;
+    private int level = 1;
 
     private int heartX = 135;
     private int heartY = 306;
@@ -95,8 +96,6 @@ public class Board extends JPanel implements ActionListener {
 
         timer = new Timer(DELAY, this);
         timer.start();
-
-        playMusic(0);
     }
 
     /**
@@ -265,6 +264,9 @@ public class Board extends JPanel implements ActionListener {
 
         g.setColor(Color.WHITE);
         g.drawString("Lives:", 100, 325);
+
+        g.setColor(Color.WHITE);
+        g.drawString("Level: " + level, 385, 325);
     }
 
     /**
@@ -275,14 +277,22 @@ public class Board extends JPanel implements ActionListener {
     private void drawGameOver(Graphics g) {
         String msg = "Game Over";
         String scoreMsg = "Your score: " + score;
+        String levelMsg = "Your reached level: " + level;
         String restartMsg = "Press R to restart";
+
         Font small = new Font("Poppins", Font.BOLD, 14);
+        Font large = new Font("Joystix", Font.BOLD, 20);
         FontMetrics fm = getFontMetrics(g.getFont());
+
+
+        g.setColor(Color.red);
+        g.setFont(large);
+        g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2 - 35, B_HEIGHT / 2 - 30);
 
         g.setColor(Color.white);
         g.setFont(small);
-        g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2, B_HEIGHT / 2);
-        g.drawString(scoreMsg, (B_WIDTH - fm.stringWidth(scoreMsg)) / 2, B_HEIGHT / 2 + 20);
+        g.drawString(scoreMsg, (B_WIDTH - fm.stringWidth(scoreMsg)) / 2, B_HEIGHT / 2);
+        g.drawString(levelMsg, (B_WIDTH - fm.stringWidth(levelMsg)) / 2, B_HEIGHT / 2 + 20);
         g.drawString(restartMsg, (B_WIDTH - fm.stringWidth(restartMsg)) / 2, B_HEIGHT / 2 + 40);
 
         playSE(2);
@@ -294,12 +304,12 @@ public class Board extends JPanel implements ActionListener {
      * @param g
      */
     private void drawStartScreen(Graphics g) {
-        String instructions = "Use the ARROW KEYS to move and SPACE to shoot";
+        String instructions = "Use the ARROW KEYS/WASD to move and SPACE to shoot";
         String pause = "Press P to pause";
         String msg = "Press ENTER to start";
         String title = "Galactic Guardian";
 
-        Font small = new Font("Poppins", Font.BOLD, 14);
+        Font small = new Font("Poppins", Font.BOLD, 12);
         Font large = new Font("Joystix", Font.BOLD, 20);
 
         FontMetrics fmSmall = getFontMetrics(small);
@@ -311,7 +321,7 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(pause, (B_WIDTH - fmSmall.stringWidth(pause)) / 2, B_HEIGHT / 2 - 20);
         g.drawString(msg, (B_WIDTH - fmSmall.stringWidth(msg)) / 2, B_HEIGHT / 2 + 40);
 
-        g.setColor(Color.red);
+        g.setColor(Color.blue);
         g.setFont(large);
         g.drawString(title, (B_WIDTH - fmLarge.stringWidth(title)) / 2, B_HEIGHT / 2 - 60);
     }
@@ -374,9 +384,18 @@ public class Board extends JPanel implements ActionListener {
 
             checkCollisions();
 
+            level = levelUp(score);
+
             farBackgroundX -= 1;
             midBackgroundX -= 2;
             foregroundX -= 3;
+
+            // if (ingame) {
+            // playMusic(1); // Assuming 0 is the appropriate music index, adjust if
+            // necessary
+            // } else {
+            // stopMusic();
+            // }
         }
 
         if (farBackgroundX == -B_WIDTH) {
@@ -521,7 +540,7 @@ public class Board extends JPanel implements ActionListener {
      */
     private void updateLives() {
         if (lives == 0) {
-            ingame = false;
+            die();
         } else if (lives < hearts.size()) {
             hearts.remove(hearts.size() - 1);
         }
@@ -532,6 +551,31 @@ public class Board extends JPanel implements ActionListener {
      */
     private void resetPlayer() {
         spaceShip = new SpaceShip();
+    }
+
+    /**
+     * Player dies
+     */
+    private void die() {
+        ingame = false;
+        stopMusic();
+    }
+
+    /**
+     * Leveling up
+     */
+    private int levelUp(int score) {
+        int level = 1;
+        int temp = 0;
+        int increment = 5;
+
+        while (score >= temp) {
+            temp += increment;
+            increment += 5;
+            level += 1;
+        }
+
+        return level - 1;
     }
 
     /* #endregion */
@@ -707,10 +751,9 @@ public class Board extends JPanel implements ActionListener {
 
     /**
      * 
-     * TODO - Add power ups
+     * TODO - Add power ups logic
      * TODO - Add particles to enemies
      * TODO - Fix the aliens (The redrawing and the spawning when dying)
      * TODO - Add a boss
-     * TODO - Level system
      */
 }

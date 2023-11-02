@@ -99,6 +99,18 @@ public class SpaceShip extends Sprite {
         if (key == KeyEvent.VK_SPACE) {
             fire();
         }
+        if (key == KeyEvent.VK_W) {
+            dy = -2;
+        }
+        if (key == KeyEvent.VK_S) {
+            dy = 2;
+        }
+        if (key == KeyEvent.VK_A) {
+            dx = -2;
+        }
+        if (key == KeyEvent.VK_D) {
+            dx = 2;
+        }
     }
 
     public void keyReleased(KeyEvent e) {
@@ -115,6 +127,18 @@ public class SpaceShip extends Sprite {
         }
         if (key == KeyEvent.VK_DOWN) {
             dy = 0;
+        }
+        if (key == KeyEvent.VK_W) {
+            dy = 0;
+        }
+        if (key == KeyEvent.VK_S) {
+            dy = 0;
+        }
+        if (key == KeyEvent.VK_A) {
+            dx = 0;
+        }
+        if (key == KeyEvent.VK_D) {
+            dx = 0;
         }
     }
 
