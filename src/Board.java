@@ -651,6 +651,7 @@ public class Board extends JPanel implements ActionListener {
             Rectangle rShield = shield.getResizedBounds();
             if (rSpaceShip.intersects(rShield)) {
                 shield.setVisible(false);
+                playSE(1);
             }
         }
 
@@ -658,6 +659,7 @@ public class Board extends JPanel implements ActionListener {
             Rectangle rFire = fire.getResizedBounds();
             if (rSpaceShip.intersects(rFire)) {
                 fire.setVisible(false);
+                playSE(1);
             }
         }
 
@@ -666,6 +668,7 @@ public class Board extends JPanel implements ActionListener {
             if (rSpaceShip.intersects(rBomb)) {
                 bomb.setVisible(false);
                 explosion();
+                playSE(1);
             }
         }
     }
@@ -737,11 +740,11 @@ public class Board extends JPanel implements ActionListener {
         for (Alien alien : aliens) {
             alien.setVisible(false);
             score += 1;
-            if (alienCount > 5) {
-                alienCount = alienCount - 2;
-            } else {
-                alienCount = alienCount - 1;
-            }
+        }
+        if (alienCount < 5) {
+            alienCount = alienCount - 1;
+        } else {
+            alienCount = alienCount - 5;
         }
     }
 
