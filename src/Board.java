@@ -49,7 +49,7 @@ public class Board extends JPanel implements ActionListener {
     private int alienCount = 5;
     private int level = 1;
 
-    private int heartX = 135;
+    private int heartX = 160;
     private int heartY = 306;
 
     private Timer timer;
@@ -263,7 +263,7 @@ public class Board extends JPanel implements ActionListener {
         g.drawString("Your score: " + score, 5, 325);
 
         g.setColor(Color.WHITE);
-        g.drawString("Lives:", 100, 325);
+        g.drawString("Lives:", 125, 325);
 
         g.setColor(Color.WHITE);
         g.drawString("Level: " + level, 385, 325);
@@ -624,7 +624,7 @@ public class Board extends JPanel implements ActionListener {
                     score += 1;
 
                     if (shields.isEmpty() && fires.isEmpty() && bombs.isEmpty()) {
-                        if (random.nextInt(25) == 0) {
+                        if (random.nextInt(5) == 0) {
                             int powerUp = random.nextInt(3);
 
                             if (powerUp == 0) {
@@ -665,6 +665,7 @@ public class Board extends JPanel implements ActionListener {
             Rectangle rBomb = bomb.getResizedBounds();
             if (rSpaceShip.intersects(rBomb)) {
                 bomb.setVisible(false);
+                explosion();
             }
         }
     }
@@ -731,6 +732,18 @@ public class Board extends JPanel implements ActionListener {
         pause = !pause;
     }
     /* #endregion */
+
+    private void explosion() {
+        for (Alien alien : aliens) {
+            alien.setVisible(false);
+            score += 1;
+            if (alienCount > 5) {
+                alienCount = alienCount - 2;
+            } else {
+                alienCount = alienCount - 1;
+            }
+        }
+    }
 
     // * Key events
     private class TAdapter extends KeyAdapter {
