@@ -43,7 +43,12 @@ public class Board extends JPanel implements ActionListener {
     private boolean ingame;
     private boolean isGameStarted = false;
     private boolean pause = false;
+
     private boolean invincible = false;
+    private boolean drawShield = true;
+
+    private boolean superShot = false;
+    private boolean drawSuperShot = true;
 
     private int score = 0;
     private int lives = 3;
@@ -54,7 +59,6 @@ public class Board extends JPanel implements ActionListener {
     private int heartY = 306;
 
     private Timer timer;
-    private Timer invincibleTimer;
 
     private int farBackgroundX = 0;
     private int midBackgroundX = 0;
@@ -160,8 +164,15 @@ public class Board extends JPanel implements ActionListener {
         }
 
         // * Dibujar escudo
-        if (invincible) {
+        if (invincible && drawShield) {
             g.setColor(Color.GREEN);
+            Rectangle rSpaceShip = spaceShip.getBounds();
+            g.drawOval(rSpaceShip.x, rSpaceShip.y, rSpaceShip.width, rSpaceShip.height);
+        }
+
+        // * Dibujar supershot
+        if (superShot && drawSuperShot) {
+            g.setColor(Color.RED);
             Rectangle rSpaceShip = spaceShip.getBounds();
             g.drawOval(rSpaceShip.x, rSpaceShip.y, rSpaceShip.width, rSpaceShip.height);
         }
@@ -546,6 +557,7 @@ public class Board extends JPanel implements ActionListener {
         Random random = new Random();
 
         Rectangle rSpaceShip = spaceShip.getBounds();
+        List<Missile> missiles = spaceShip.getMissiles();
 
         // * Check for collisions between the space ship and the aliens
         if (!invincible) {
@@ -565,34 +577,35 @@ public class Board extends JPanel implements ActionListener {
         }
 
         // * Check for collisions between the missiles and the aliens
-        List<Missile> missiles = spaceShip.getMissiles();
-        for (Missile missile : missiles) {
-            Rectangle rMissile = missile.getBounds();
-            for (Alien alien : aliens) {
-                Rectangle rAlien = alien.getBounds();
-                if (rMissile.intersects(rAlien)) {
-                    missile.setVisible(false);
-                    alien.setVisible(false);
-                    score += 1;
+        if (!superShot) {
+            for (Missile missile : missiles) {
+                Rectangle rMissile = missile.getBounds();
+                for (Alien alien : aliens) {
+                    Rectangle rAlien = alien.getBounds();
+                    if (rMissile.intersects(rAlien)) {
+                        missile.setVisible(false);
+                        alien.setVisible(false);
+                        score += 1;
 
-                    if (shields.isEmpty() && fires.isEmpty() && bombs.isEmpty()) {
-                        if (random.nextInt(5) == 0) {
-                            int powerUp = random.nextInt(3);
+                        if (shields.isEmpty() && fires.isEmpty() && bombs.isEmpty()) {
+                            if (random.nextInt(5) == 0) {
+                                int powerUp = random.nextInt(3);
 
-                            if (powerUp == 0) {
-                                shields.add(new Shield(alien.getX(), alien.getY()));
-                            } else if (powerUp == 1) {
-                                fires.add(new Fire(alien.getX(), alien.getY()));
-                            } else if (powerUp == 2) {
-                                bombs.add(new Bomb(alien.getX(), alien.getY()));
+                                if (powerUp == 0) {
+                                    shields.add(new Shield(alien.getX(), alien.getY()));
+                                } else if (powerUp == 1) {
+                                    fires.add(new Fire(alien.getX(), alien.getY()));
+                                } else if (powerUp == 2) {
+                                    bombs.add(new Bomb(alien.getX(), alien.getY()));
+                                }
                             }
                         }
-                    }
 
-                    playSE(4);
+                        playSE(4);
 
-                    if (score % 10 == 0) {
-                        alienCount += 5;
+                        if (score % 10 == 0) {
+                            alienCount += 5;
+                        }
                     }
                 }
             }
@@ -613,6 +626,7 @@ public class Board extends JPanel implements ActionListener {
             if (rSpaceShip.intersects(rFire)) {
                 fire.setVisible(false);
                 playSE(1);
+                powershot();
             }
         }
 
@@ -620,8 +634,8 @@ public class Board extends JPanel implements ActionListener {
             Rectangle rBomb = bomb.getResizedBounds();
             if (rSpaceShip.intersects(rBomb)) {
                 bomb.setVisible(false);
-                explosion();
                 playSE(1);
+                explosion();
             }
         }
 
@@ -633,6 +647,40 @@ public class Board extends JPanel implements ActionListener {
                     alien.setVisible(false);
                     score += 1;
                     playSE(4);
+                }
+            }
+        }
+
+        // * Check for collisions when supershot is active
+        if (superShot) {
+            for (Missile missile : missiles) {
+                Rectangle rMissile = missile.getBounds();
+                for (Alien alien : aliens) {
+                    Rectangle rAlien = alien.getBounds();
+                    if (rMissile.intersects(rAlien)) {
+                        alien.setVisible(false);
+                        score += 1;
+
+                        if (shields.isEmpty() && fires.isEmpty() && bombs.isEmpty()) {
+                            if (random.nextInt(5) == 0) {
+                                int powerUp = random.nextInt(3);
+
+                                if (powerUp == 0) {
+                                    shields.add(new Shield(alien.getX(), alien.getY()));
+                                } else if (powerUp == 1) {
+                                    fires.add(new Fire(alien.getX(), alien.getY()));
+                                } else if (powerUp == 2) {
+                                    bombs.add(new Bomb(alien.getX(), alien.getY()));
+                                }
+                            }
+                        }
+
+                        playSE(4);
+
+                        if (score % 10 == 0) {
+                            alienCount += 5;
+                        }
+                    }
                 }
             }
         }
@@ -716,14 +764,27 @@ public class Board extends JPanel implements ActionListener {
 
     private void invincible() {
         invincible = true;
-        invincibleTimer = new Timer(5000, new ActionListener() {
+        Timer invincibleTimer = new Timer(5000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 invincible = false;
-                invincibleTimer.stop();
+                ((Timer) e.getSource()).stop();
             }
         });
         invincibleTimer.start();
+    }
+
+    private void powershot() {
+        superShot = true;
+
+        Timer shotTimer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                superShot = false;
+                ((Timer) e.getSource()).stop();
+            }
+        });
+        shotTimer.start();
     }
 
     // * Key events
@@ -751,7 +812,6 @@ public class Board extends JPanel implements ActionListener {
 
     /**
      * 
-     * TODO - Add power ups logic
      * TODO - Add a boss
      */
 }
