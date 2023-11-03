@@ -12,6 +12,7 @@ import java.awt.Image;
 public class Particle extends Sprite {
     private static final int B_WIDTH = 390;
     private static final int PARTICLE_SPEED = -2;
+    private static final int PARTICLE_ALIEN_SPEED = 2;
 
     private int life;
 
@@ -41,6 +42,15 @@ public class Particle extends Sprite {
         life--;
 
         if (x > B_WIDTH || life <= 0) {
+            visible = false;
+        }
+    }
+
+    public void moveAlien() {
+        x += PARTICLE_ALIEN_SPEED;
+        life--;
+
+        if (life <= 0) {
             visible = false;
         }
     }

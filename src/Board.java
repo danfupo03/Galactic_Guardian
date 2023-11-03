@@ -206,6 +206,9 @@ public class Board extends JPanel implements ActionListener {
 
         for (Alien alien : aliens) {
             g.drawImage(alien.getImage(), alien.getX(), alien.getY(), null);
+            for (Particle particle : alien.getParticles()) {
+                g.drawImage(particle.getImage(), particle.getX(), particle.getY(), null);
+            }
         }
 
         for (Shield shield : shields) {
@@ -335,6 +338,7 @@ public class Board extends JPanel implements ActionListener {
             updateAliens();
 
             updateParticles();
+            updateAlienParticles();
 
             updateLives();
 
@@ -416,6 +420,21 @@ public class Board extends JPanel implements ActionListener {
                 particle.move();
             } else {
                 itr.remove();
+            }
+        }
+    }
+
+    private void updateAlienParticles() {
+        for (Alien alien : aliens) {
+            List<Particle> particles = alien.getParticles();
+            ListIterator<Particle> itr = particles.listIterator();
+            while (itr.hasNext()) {
+                Particle particle = itr.next();
+                if (particle.isVisible()) {
+                    particle.moveAlien();
+                } else {
+                    itr.remove();
+                }
             }
         }
     }
