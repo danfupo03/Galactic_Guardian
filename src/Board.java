@@ -43,6 +43,7 @@ public class Board extends JPanel implements ActionListener {
     private boolean ingame;
     private boolean isGameStarted = false;
     private boolean pause = false;
+    private boolean invincible = false;
 
     private int score = 0;
     private int lives = 3;
@@ -53,6 +54,7 @@ public class Board extends JPanel implements ActionListener {
     private int heartY = 306;
 
     private Timer timer;
+    private Timer invincibleTimer;
 
     private int farBackgroundX = 0;
     private int midBackgroundX = 0;
@@ -157,63 +159,11 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
-        // * Dibujar la caja de colisión de la nave en rojo
-        if (spaceShip.isVisible()) {
-            g.setColor(Color.RED);
+        // * Dibujar escudo
+        if (invincible) {
+            g.setColor(Color.GREEN);
             Rectangle rSpaceShip = spaceShip.getBounds();
-            g.drawRect(rSpaceShip.x, rSpaceShip.y, rSpaceShip.width, rSpaceShip.height);
-            g.drawImage(spaceShip.getImage(), spaceShip.getX(), spaceShip.getY(), null);
-        }
-
-        // * Dibujar la caja de colisión de los aliens en rojo
-        for (Alien alien : aliens) {
-            if (alien.isVisible()) {
-                g.setColor(Color.RED);
-                Rectangle rAlien = alien.getBounds();
-                g.drawRect(rAlien.x, rAlien.y, rAlien.width, rAlien.height);
-                g.drawImage(alien.getImage(), alien.getX(), alien.getY(), null);
-            }
-        }
-
-        // * Dibujar la caja de colisión de los misiles en rojo
-        List<Missile> missiles = spaceShip.getMissiles();
-        for (Missile missile : missiles) {
-            if (missile.isVisible()) {
-                g.setColor(Color.RED);
-                Rectangle rMissile = missile.getBounds();
-                g.drawRect(rMissile.x, rMissile.y, rMissile.width, rMissile.height);
-                g.drawImage(missile.getImage(), missile.getX(), missile.getY(), null);
-            }
-        }
-
-        // * Dibujar la caja de colisión de los escudos en rojo
-        for (Shield shield : shields) {
-            if (shield.isVisible()) {
-                g.setColor(Color.RED);
-                Rectangle rShield = shield.getBounds();
-                g.drawRect(rShield.x, rShield.y, rShield.width, rShield.height);
-                g.drawImage(shield.getImage(), shield.getX(), shield.getY(), null);
-            }
-        }
-
-        // * Dibujar la caja de colisión de los fuegos en rojo
-        for (Fire fire : fires) {
-            if (fire.isVisible()) {
-                g.setColor(Color.RED);
-                Rectangle rFire = fire.getBounds();
-                g.drawRect(rFire.x, rFire.y, rFire.width, rFire.height);
-                g.drawImage(fire.getImage(), fire.getX(), fire.getY(), null);
-            }
-        }
-
-        // * Dibujar la caja de colisión de las bombas en rojo
-        for (Bomb bomb : bombs) {
-            if (bomb.isVisible()) {
-                g.setColor(Color.RED);
-                Rectangle rBomb = bomb.getBounds();
-                g.drawRect(rBomb.x, rBomb.y, rBomb.width, rBomb.height);
-                g.drawImage(bomb.getImage(), bomb.getX(), bomb.getY(), null);
-            }
+            g.drawOval(rSpaceShip.x, rSpaceShip.y, rSpaceShip.width, rSpaceShip.height);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -598,16 +548,18 @@ public class Board extends JPanel implements ActionListener {
         Rectangle rSpaceShip = spaceShip.getBounds();
 
         // * Check for collisions between the space ship and the aliens
-        for (Alien alien : aliens) {
-            Rectangle rAlien = alien.getBounds();
-            if (rSpaceShip.intersects(rAlien)) {
-                spaceShip.setVisible(false);
-                alien.setVisible(false);
-                lives -= 1;
-                playSE(3);
+        if (!invincible) {
+            for (Alien alien : aliens) {
+                Rectangle rAlien = alien.getBounds();
+                if (rSpaceShip.intersects(rAlien)) {
+                    spaceShip.setVisible(false);
+                    alien.setVisible(false);
+                    lives -= 1;
+                    playSE(3);
 
-                if (lives > 0) {
-                    resetPlayer();
+                    if (lives > 0) {
+                        resetPlayer();
+                    }
                 }
             }
         }
@@ -652,6 +604,7 @@ public class Board extends JPanel implements ActionListener {
             if (rSpaceShip.intersects(rShield)) {
                 shield.setVisible(false);
                 playSE(1);
+                invincible();
             }
         }
 
@@ -669,6 +622,18 @@ public class Board extends JPanel implements ActionListener {
                 bomb.setVisible(false);
                 explosion();
                 playSE(1);
+            }
+        }
+
+        // * Check for collisions when shield is active
+        if (invincible) {
+            for (Alien alien : aliens) {
+                Rectangle rAlien = alien.getBounds();
+                if (rSpaceShip.intersects(rAlien)) {
+                    alien.setVisible(false);
+                    score += 1;
+                    playSE(4);
+                }
             }
         }
     }
@@ -696,8 +661,8 @@ public class Board extends JPanel implements ActionListener {
         lives = 3;
         timer.start();
 
-        heartX = 140;
-        heartY = 311;
+        heartX = 160;
+        heartY = 306;
 
         for (int i = 0; i < lives; i++) {
             hearts.add(new Heart(heartX, heartY));
@@ -741,11 +706,24 @@ public class Board extends JPanel implements ActionListener {
             alien.setVisible(false);
             score += 1;
         }
-        if (alienCount < 5) {
+        if (alienCount <= 5) {
             alienCount = alienCount - 1;
         } else {
             alienCount = alienCount - 5;
         }
+        playSE(4);
+    }
+
+    private void invincible() {
+        invincible = true;
+        invincibleTimer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                invincible = false;
+                invincibleTimer.stop();
+            }
+        });
+        invincibleTimer.start();
     }
 
     // * Key events
