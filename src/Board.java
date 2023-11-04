@@ -32,6 +32,7 @@ public class Board extends JPanel implements ActionListener {
 
     private SpaceShip spaceShip;
     private List<Alien> aliens;
+    private List<Boss> bosses;
 
     private List<Shield> shields;
     private List<Fire> fires;
@@ -44,6 +45,9 @@ public class Board extends JPanel implements ActionListener {
     private boolean isGameStarted = false;
     private boolean pause = false;
 
+    boolean bossSpawned = false;
+    boolean bossDefeated = false;
+
     private boolean invincible = false;
     private boolean drawShield = true;
 
@@ -54,6 +58,7 @@ public class Board extends JPanel implements ActionListener {
     private int lives = 3;
     private int alienCount = 5;
     private int level = 1;
+    private int bossLife = 10;
 
     private int heartX = 160;
     private int heartY = 306;
@@ -87,6 +92,7 @@ public class Board extends JPanel implements ActionListener {
 
         spaceShip = new SpaceShip();
         aliens = new ArrayList<Alien>();
+        bosses = new ArrayList<Boss>();
         hearts = new ArrayList<Heart>();
 
         shields = new ArrayList<Shield>();
@@ -209,6 +215,10 @@ public class Board extends JPanel implements ActionListener {
             for (Particle particle : alien.getParticles()) {
                 g.drawImage(particle.getImage(), particle.getX(), particle.getY(), null);
             }
+        }
+
+        for (Boss boss : bosses) {
+            g.drawImage(boss.getImage(), boss.getX(), boss.getY(), null);
         }
 
         for (Shield shield : shields) {
@@ -337,6 +347,8 @@ public class Board extends JPanel implements ActionListener {
 
             updateAliens();
 
+            updateBosses();
+
             updateParticles();
             updateAlienParticles();
 
@@ -461,6 +473,32 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
+     * Update the bosses
+     */
+    private void updateBosses() {
+        ListIterator<Boss> itr = bosses.listIterator();
+        while (itr.hasNext()) {
+            Boss boss = itr.next();
+            if (boss.isVisible()) {
+                boss.move();
+            } else {
+                itr.remove();
+            }
+        }
+
+        if (level % 5 == 0 && !bossDefeated && bosses.isEmpty() && !bossSpawned) {
+            bosses.add(new Boss(325, 100));
+            bossLife = 10;
+            bossSpawned = true;
+        }
+
+        if (bosses.isEmpty() && bossSpawned) {
+            bossSpawned = false;
+            bossDefeated = true;
+        }
+    }
+
+    /**
      * Update the shields
      */
     private void updateShields() {
@@ -522,6 +560,9 @@ public class Board extends JPanel implements ActionListener {
             die();
         } else if (lives < hearts.size()) {
             hearts.remove(hearts.size() - 1);
+        } else if (lives > hearts.size()) {
+            hearts.add(new Heart(heartX, heartY));
+            heartX += 20;
         }
     }
 
@@ -595,6 +636,23 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
+        // * Check for collisions between the space ship and the bosses
+        if (!invincible) {
+            for (Boss boss : bosses) {
+                Rectangle rBoss = boss.getBounds();
+                if (rSpaceShip.intersects(rBoss)) {
+                    spaceShip.setVisible(false);
+                    lives -= 1;
+                    bossLife -= 1;
+                    playSE(3);
+
+                    if (lives > 0) {
+                        resetPlayer();
+                    }
+                }
+            }
+        }
+
         // * Check for collisions between the missiles and the aliens
         if (!superShot) {
             for (Missile missile : missiles) {
@@ -624,6 +682,27 @@ public class Board extends JPanel implements ActionListener {
 
                         if (score % 10 == 0) {
                             alienCount += 5;
+                        }
+                    }
+                }
+            }
+        }
+
+        // * Check for collisions between the missiles and the bosses
+        if (!superShot) {
+            for (Missile missile : missiles) {
+                Rectangle rMissile = missile.getBounds();
+                for (Boss boss : bosses) {
+                    Rectangle rBoss = boss.getBounds();
+                    if (rMissile.intersects(rBoss)) {
+                        missile.setVisible(false);
+                        bossLife -= 1;
+
+                        if (bossLife == 0) {
+                            boss.setVisible(false);
+                            score += 10;
+                            lives += 1;
+                            playSE(4);
                         }
                     }
                 }
@@ -721,9 +800,12 @@ public class Board extends JPanel implements ActionListener {
     private void restart() {
         spaceShip = new SpaceShip();
         aliens = new ArrayList<Alien>();
+        bosses = new ArrayList<Boss>();
         hearts = new ArrayList<Heart>();
         ingame = true;
         alienCount = 5;
+        bossLife = 10;
+        level = 1;
         score = 0;
         lives = 3;
         timer.start();
@@ -828,9 +910,4 @@ public class Board extends JPanel implements ActionListener {
             spaceShip.keyReleased(e);
         }
     }
-
-    /**
-     * 
-     * TODO - Add a boss
-     */
 }

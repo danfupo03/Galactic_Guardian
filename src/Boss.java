@@ -5,11 +5,10 @@ import javax.swing.ImageIcon;
 import java.awt.Rectangle;
 
 public class Boss extends Sprite {
-    private static final int B_HEIGHT = 285;
+    private static final int B_HEIGHT = 250;
     private static final int BOSS_HEIGHT = 25;
 
     private int yDirection = 1;
-
     private int originalWidth, originalHeight;
 
     public Boss(int x, int y) {
@@ -23,9 +22,9 @@ public class Boss extends Sprite {
         originalWidth = originalImage.getWidth(null);
         originalHeight = originalImage.getHeight(null);
 
-        BufferedImage resizedImage = new BufferedImage(25, 25, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage resizedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = resizedImage.createGraphics();
-        g2d.drawImage(originalImage, 0, 0, 25, 25, null);
+        g2d.drawImage(originalImage, 0, 0, 100, 100, null);
         g2d.dispose();
 
         image = resizedImage;
@@ -37,11 +36,9 @@ public class Boss extends Sprite {
     public void move() {
         y += yDirection;
 
-        if (y <= 0 || y >= B_HEIGHT - BOSS_HEIGHT) {
+        if (y <= 0 - BOSS_HEIGHT || y >= B_HEIGHT - BOSS_HEIGHT) {
             yDirection *= -1;
         }
-
-        System.out.println(y);
     }
 
     public Rectangle getResizedBounds() {
