@@ -30,6 +30,11 @@ public class Board extends JPanel implements ActionListener {
     private static final int B_WIDTH = 450;
     private static final int B_HEIGHT = 300;
 
+    private static final int BOSS_HEALTH_BAR_X = 50;
+    private static final int BOSS_HEALTH_BAR_Y = 20;
+    private static final int BOSS_HEALTH_BAR_WIDTH = 150;
+    private static final int BOSS_HEALTH_BAR_HEIGHT = 20;
+
     private SpaceShip spaceShip;
     private List<Alien> aliens;
     private List<Boss> bosses;
@@ -231,6 +236,16 @@ public class Board extends JPanel implements ActionListener {
 
         for (Bomb bomb : bombs) {
             g.drawImage(bomb.getImage(), bomb.getX(), bomb.getY(), null);
+        }
+
+        // * Draw the boss health bar
+        if (!bosses.isEmpty() && bossSpawned) {
+            g.setColor(Color.RED);
+            g.fillRect(BOSS_HEALTH_BAR_X, BOSS_HEALTH_BAR_Y, BOSS_HEALTH_BAR_WIDTH, BOSS_HEALTH_BAR_HEIGHT);
+
+            int bossHealthBarLength = (int) ((double) bossLife / 10 * BOSS_HEALTH_BAR_WIDTH);
+            g.setColor(Color.GREEN);
+            g.fillRect(BOSS_HEALTH_BAR_X, BOSS_HEALTH_BAR_Y, bossHealthBarLength, BOSS_HEALTH_BAR_HEIGHT);
         }
 
         g.setColor(Color.WHITE);
@@ -483,6 +498,7 @@ public class Board extends JPanel implements ActionListener {
                 boss.move();
             } else {
                 itr.remove();
+                bossSpawned = false;
             }
         }
 
@@ -697,12 +713,13 @@ public class Board extends JPanel implements ActionListener {
                     if (rMissile.intersects(rBoss)) {
                         missile.setVisible(false);
                         bossLife -= 1;
+                        playSE(9);
 
                         if (bossLife == 0) {
                             boss.setVisible(false);
                             score += 10;
                             lives += 1;
-                            playSE(4);
+                            playSE(8);
                         }
                     }
                 }
@@ -776,7 +793,7 @@ public class Board extends JPanel implements ActionListener {
                         playSE(4);
 
                         if (score % 10 == 0) {
-                            alienCount += 5;
+                            alienCount += 3;
                         }
                     }
                 }
@@ -856,9 +873,9 @@ public class Board extends JPanel implements ActionListener {
             score += 1;
         }
         if (alienCount <= 5) {
-            alienCount = alienCount - 1;
+            alienCount = Math.max(1, alienCount - 1);
         } else {
-            alienCount = alienCount - 5;
+            alienCount -= 5;
         }
         playSE(4);
     }
