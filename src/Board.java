@@ -480,6 +480,8 @@ public class Board extends JPanel implements ActionListener {
             int randomY = 5 + (int) (Math.random() * 281);
             aliens.add(new Alien(randomX, randomY));
         }
+
+        alienCount = Math.min(30, alienCount);
     }
 
     /**
@@ -605,7 +607,7 @@ public class Board extends JPanel implements ActionListener {
      * Leveling up
      */
     private int levelUp(int score) {
-        int level = 1;
+        int level = 0;
         int temp = 0;
         int increment = 5;
 
@@ -615,7 +617,12 @@ public class Board extends JPanel implements ActionListener {
             level += 1;
         }
 
-        return level - 1;
+        if (bossDefeated) {
+            level += 1;
+            bossDefeated = false;
+        }
+
+        return level;
     }
 
     /* #endregion */
@@ -640,6 +647,7 @@ public class Board extends JPanel implements ActionListener {
                     spaceShip.setVisible(false);
                     alien.setVisible(false);
                     lives -= 1;
+                    alienCount -= 3;
                     playSE(3);
 
                     if (lives > 0) {
@@ -791,6 +799,25 @@ public class Board extends JPanel implements ActionListener {
 
                         if (score % 10 == 0) {
                             alienCount += 3;
+                        }
+                    }
+                }
+            }
+
+            for (Missile missile : missiles) {
+                Rectangle rMissile = missile.getBounds();
+                for (Boss boss : bosses) {
+                    Rectangle rBoss = boss.getBounds();
+                    if (rMissile.intersects(rBoss)) {
+                        missile.setVisible(false);
+                        bossLife -= 1;
+                        playSE(9);
+
+                        if (bossLife == 0) {
+                            boss.setVisible(false);
+                            score += 10;
+                            lives += 1;
+                            playSE(8);
                         }
                     }
                 }
