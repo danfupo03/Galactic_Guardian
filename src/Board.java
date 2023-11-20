@@ -113,6 +113,8 @@ public class Board extends JPanel implements ActionListener {
 
         timer = new Timer(DELAY, this);
         timer.start();
+
+        playMusic(0);
     }
 
     /**
@@ -380,13 +382,6 @@ public class Board extends JPanel implements ActionListener {
             farBackgroundX -= 1;
             midBackgroundX -= 2;
             foregroundX -= 3;
-
-            // if (ingame) {
-            // playMusic(1); // Assuming 0 is the appropriate music index, adjust if
-            // necessary
-            // } else {
-            // stopMusic();
-            // }
         }
 
         if (farBackgroundX == -B_WIDTH) {
@@ -577,8 +572,10 @@ public class Board extends JPanel implements ActionListener {
         } else if (lives < hearts.size()) {
             hearts.remove(hearts.size() - 1);
         } else if (lives > hearts.size()) {
-            hearts.add(new Heart(heartX, heartY));
-            heartX += 20;
+            int lastHeartIndex = hearts.size() - 1;
+            int lastHeartX = (lastHeartIndex >= 0) ? hearts.get(lastHeartIndex).getX() : 0;
+
+            hearts.add(new Heart(lastHeartX + 20, heartY));
         }
     }
 
