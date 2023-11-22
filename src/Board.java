@@ -51,7 +51,6 @@ public class Board extends JPanel implements ActionListener {
     private boolean pause = false;
 
     boolean bossSpawned = false;
-    boolean bossDefeated = false;
 
     private boolean invincible = false;
     private boolean drawShield = true;
@@ -59,7 +58,7 @@ public class Board extends JPanel implements ActionListener {
     private boolean superShot = false;
     private boolean drawSuperShot = true;
 
-    private int score = 0;
+    private int score = 20;
     private int lives = 3;
     private int alienCount = 5;
     private int level = 1;
@@ -499,16 +498,13 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
-        if (level % 5 == 0 && !bossDefeated && bosses.isEmpty() && !bossSpawned) {
+        if (level % 5 == 0 && bosses.isEmpty() && score % 5 == 0 + 1) {
             bosses.add(new Boss(325, 100));
             bossLife = 10;
             bossSpawned = true;
         }
 
-        if (bosses.isEmpty() && bossSpawned) {
-            bossSpawned = false;
-            bossDefeated = true;
-        }
+        System.out.println(bosses.size());
     }
 
     /**
@@ -616,12 +612,6 @@ public class Board extends JPanel implements ActionListener {
             increment += 5;
             level += 1;
         }
-
-        if (bossDefeated) {
-            level += 1;
-            bossDefeated = false;
-        }
-
         return level;
     }
 
