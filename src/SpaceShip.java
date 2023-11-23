@@ -1,8 +1,7 @@
 /*----------------------------------------------------------------
 *
 * Spaceship.java
-* Fecha: 27-Oct-2023
-* Autor: Daniel Emilio Fuentes - A01708302
+* Autor: Danfupo03
 *
 *--------------------------------------------------------------*/
 
@@ -24,17 +23,28 @@ public class SpaceShip extends Sprite {
     private int particleIndex = 0;
     private int particleCounter = 0;
 
+    /**
+     * Constructor of the SpaceShip class
+     */
     public SpaceShip() {
         super(40, 50);
         missiles = new ArrayList<Missile>();
         particles = new ArrayList<Particle>();
     }
 
+    /**
+     * Loads the image/sprite of the spaceship
+     */
     public void loadImage() {
         ImageIcon ii = new ImageIcon("assets/images/craft.png");
         image = ii.getImage();
     }
 
+    /**
+     * Moves the spaceship
+     * if it goes out of bounds, it is moved to the other side
+     * and a particle is added.
+     */
     public void move() {
         x += dx;
         y += dy;
@@ -60,6 +70,9 @@ public class SpaceShip extends Sprite {
         }
     }
 
+    /**
+     * Adds a particle to the spaceship when it moves
+     */
     public void addParticle() {
         particles.add(new Particle(x, y + height / 2 - 3, particleLife, particleIndex));
         particleCounter++;
@@ -74,14 +87,35 @@ public class SpaceShip extends Sprite {
 
     }
 
+    /**
+     * Returns the missiles of the spaceship when it fires
+     * 
+     * @return
+     */
     public List<Missile> getMissiles() {
         return missiles;
     }
 
+    /**
+     * Returns the moving particles of the spaceship
+     * 
+     * @return
+     */
     public List<Particle> getParticles() {
         return particles;
     }
 
+    /**
+     * Moving method of the spaceship, it is called when a key is pressed
+     * the spaceship moves in the direction of the key pressed
+     * if the space key is pressed, it fires a missile
+     * if the w key is pressed, it moves up
+     * if the s key is pressed, it moves down
+     * if the a key is pressed, it moves left
+     * if the d key is pressed, it moves right
+     * 
+     * @param e
+     */
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_LEFT) {
@@ -113,6 +147,12 @@ public class SpaceShip extends Sprite {
         }
     }
 
+    /**
+     * Moving method of the spaceship, it is called when a key is released
+     * the spaceship stops moving in the direction of the key released
+     * 
+     * @param e
+     */
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
 
@@ -142,6 +182,9 @@ public class SpaceShip extends Sprite {
         }
     }
 
+    /**
+     * Fires a missile from the spaceship
+     */
     public void fire() {
         missiles.add(new Missile(x + width, y + height / 2));
         sound.setFile(7);

@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------
+*
+* Bomb.java
+* Autor: Danfupo03
+*
+*--------------------------------------------------------------*/
+
 import java.awt.image.BufferedImage;
 import java.awt.Image;
 import java.awt.Graphics2D;
@@ -7,10 +14,18 @@ import java.awt.Rectangle;
 public class Bomb extends Sprite {
     private int originalWidth, originalHeight;
 
+    /**
+     * Constructor of the Bomb class
+     * @param x
+     * @param y
+     */
     public Bomb(int x, int y) {
         super(x, y);
     }
 
+    /**
+     * Loads the image/sprite of the bomb
+     */
     public void loadImage() {
         ImageIcon ii = new ImageIcon("assets/images/Bomb.png");
         Image originalImage = ii.getImage();
@@ -29,18 +44,33 @@ public class Bomb extends Sprite {
         height = image.getHeight(null);
     }
 
+    /**
+     * Moves the bomb powerup to the left
+     */
     public void move() {
         x--;
     }
 
+    /**
+     * Returns the resized bounds of the bomb powerup
+     * @return
+     */
     public Rectangle getResizedBounds() {
         return new Rectangle(x, y, width, height);
     }
 
+    /**
+     * Returns the original width of the bomb powerup
+     * @return
+     */
     public int getOriginalWidth() {
         return originalWidth;
     }
 
+    /**
+     * Returns the original height of the bomb powerup
+     * @return
+     */
     public int getOriginalHeight() {
         return originalHeight;
     }

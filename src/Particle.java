@@ -1,8 +1,7 @@
 /*----------------------------------------------------------------
 *
 * Particle.java
-* Fecha: 27-Oct-2023
-* Autor: Daniel Emilio Fuentes - A01708302
+* Autor: Danfupo03
 *
 *--------------------------------------------------------------*/
 
@@ -18,6 +17,14 @@ public class Particle extends Sprite {
 
     private int imageIndex;
 
+    /**
+     * Constructor of the Particle class
+     * 
+     * @param x
+     * @param y
+     * @param life
+     * @param imageIndex
+     */
     public Particle(int x, int y, int life, int imageIndex) {
         super(x, y);
         this.life = life;
@@ -25,6 +32,9 @@ public class Particle extends Sprite {
         loadImage();
     }
 
+    /**
+     * Loads the images/sprites of the particles
+     */
     @Override
     public void loadImage() {
         ImageIcon[] particleImages = {
@@ -37,6 +47,12 @@ public class Particle extends Sprite {
         image = image.getScaledInstance(5, 5, Image.SCALE_SMOOTH);
     }
 
+    /**
+     * Moves the particles to the right
+     * if it goes out of bounds, it is no longer visible
+     * and it is removed from the particles list.
+     * This are the particles of the player.
+     */
     public void move() {
         x += PARTICLE_SPEED;
         life--;
@@ -46,6 +62,12 @@ public class Particle extends Sprite {
         }
     }
 
+    /**
+     * Moves the particles to the left
+     * if it goes out of bounds, it is no longer visible
+     * and it is removed from the particles list.
+     * This are the particles of the alien.
+     */
     public void moveAlien() {
         x += PARTICLE_ALIEN_SPEED;
         life--;

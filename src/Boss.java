@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------
+*
+* Boss.java
+* Autor: Danfupo03
+*
+*--------------------------------------------------------------*/
+
 import java.awt.image.BufferedImage;
 import java.awt.Image;
 import java.awt.Graphics2D;
@@ -11,10 +18,19 @@ public class Boss extends Sprite {
     private int yDirection = 1;
     private int originalWidth, originalHeight;
 
+    /**
+     * Constructor of the Boss class
+     * 
+     * @param x
+     * @param y
+     */
     public Boss(int x, int y) {
         super(x, y);
     }
 
+    /**
+     * Loads the image/sprite of the boss
+     */
     public void loadImage() {
         ImageIcon ii = new ImageIcon("assets/images/boss.png");
         Image originalImage = ii.getImage();
@@ -33,6 +49,9 @@ public class Boss extends Sprite {
         height = image.getHeight(null);
     }
 
+    /**
+     * Moves the boss up and down
+     */
     public void move() {
         y += yDirection;
 
@@ -41,14 +60,29 @@ public class Boss extends Sprite {
         }
     }
 
+    /**
+     * Returns the resized bounds of the boss
+     * 
+     * @return
+     */
     public Rectangle getResizedBounds() {
         return new Rectangle(x, y, width, height);
     }
 
+    /**
+     * Returns the original width of the boss
+     * 
+     * @return
+     */
     public int getOriginalWidth() {
         return originalWidth;
     }
 
+    /**
+     * Returns the original height of the boss
+     * 
+     * @return
+     */
     public int getOriginalHeight() {
         return originalHeight;
     }

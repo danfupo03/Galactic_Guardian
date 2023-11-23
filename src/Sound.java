@@ -1,8 +1,7 @@
 /*----------------------------------------------------------------
 *
 * Sound.java
-* Fecha: 27-Oct-2023
-* Autor: Daniel Emilio Fuentes - A01708302
+* Autor: Danfupo03
 *
 *--------------------------------------------------------------*/
 
@@ -17,6 +16,10 @@ public class Sound {
     Clip clip;
     URL soundURL[] = new URL[30];
 
+    /**
+     * Constructor of the Sound class
+     * Loads the sound files
+     */
     public Sound() {
         soundURL[0] = getClass().getResource("assets/sounds/music.wav");
         soundURL[1] = getClass().getResource("assets/sounds/powerup.wav");
@@ -30,6 +33,10 @@ public class Sound {
         soundURL[9] = getClass().getResource("assets/sounds/bossHurt.wav");
     }
 
+    /**
+     * Sets the sound file to be played
+     * @param i
+     */
     public void setFile(int i) {
         try {
             AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[i]);
@@ -41,14 +48,23 @@ public class Sound {
         }
     }
 
+    /**
+     * Plays the sound file
+     */
     public void play() {
         clip.start();
     }
 
+    /**
+     * Loops the sound file
+     */
     public void loop() {
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
+    /**
+     * Stops the sound file
+     */
     public void stop() {
         clip.stop();
     }
