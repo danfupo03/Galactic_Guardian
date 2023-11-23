@@ -30,7 +30,7 @@ public class Board extends JPanel implements ActionListener {
     private static final int B_WIDTH = 450;
     private static final int B_HEIGHT = 300;
 
-    private static final int BOSS_HEALTH_BAR_X = 50;
+    private static final int BOSS_HEALTH_BAR_X = 40;
     private static final int BOSS_HEALTH_BAR_Y = 20;
     private static final int BOSS_HEALTH_BAR_WIDTH = 150;
     private static final int BOSS_HEALTH_BAR_HEIGHT = 20;
@@ -50,19 +50,18 @@ public class Board extends JPanel implements ActionListener {
     private boolean isGameStarted = false;
     private boolean pause = false;
 
-    boolean bossSpawned = false;
-
     private boolean invincible = false;
     private boolean drawShield = true;
 
     private boolean superShot = false;
     private boolean drawSuperShot = true;
 
-    private int score = 20;
+    private int score = 0;
     private int lives = 3;
     private int alienCount = 5;
     private int level = 1;
     private int bossLife = 10;
+    boolean bossSpawned = false;
 
     private int heartX = 160;
     private int heartY = 306;
@@ -244,7 +243,7 @@ public class Board extends JPanel implements ActionListener {
             g.setColor(Color.RED);
             g.fillRect(BOSS_HEALTH_BAR_X, BOSS_HEALTH_BAR_Y, BOSS_HEALTH_BAR_WIDTH, BOSS_HEALTH_BAR_HEIGHT);
 
-            int bossHealthBarLength = (int) ((double) bossLife / 10 * BOSS_HEALTH_BAR_WIDTH);
+            int bossHealthBarLength = (int) ((double) bossLife / 25 * BOSS_HEALTH_BAR_WIDTH);
             g.setColor(Color.GREEN);
             g.fillRect(BOSS_HEALTH_BAR_X, BOSS_HEALTH_BAR_Y, bossHealthBarLength, BOSS_HEALTH_BAR_HEIGHT);
         }
@@ -500,7 +499,7 @@ public class Board extends JPanel implements ActionListener {
 
         if (level % 5 == 0 && bosses.isEmpty() && score % 5 == 0 + 1) {
             bosses.add(new Boss(325, 100));
-            bossLife = 10;
+            bossLife = 25;
             bossSpawned = true;
         }
 
