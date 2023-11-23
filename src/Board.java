@@ -1,8 +1,7 @@
 /*----------------------------------------------------------------
 *
 * Board.java
-* Fecha: 27-Oct-2023
-* Autor: Daniel Emilio Fuentes - A01708302
+* Autor: Danfupo03
 *
 *--------------------------------------------------------------*/
 
@@ -76,14 +75,17 @@ public class Board extends JPanel implements ActionListener {
     private Image foreground;
 
     /**
-     * Constructor
+     * Constructor of the Board class
      */
     public Board() {
         initUI();
     }
 
     /**
-     * Initialize the UI and the game itself
+     * Initializes the UI and the game itself
+     * plays the music, loads the background,
+     * sets the background color, sets the focusable
+     * and starts the timer.
      */
     private void initUI() {
         addKeyListener(new TAdapter());
@@ -116,7 +118,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Load the background images
+     * Loads the background images
      */
     private void loadBackground() {
         ImageIcon farBackgroundIcon = new ImageIcon("assets/images/spr_starfield_0.png");
@@ -132,9 +134,10 @@ public class Board extends JPanel implements ActionListener {
         foreground = foreground.getScaledInstance(B_WIDTH, B_HEIGHT, Image.SCALE_DEFAULT);
     }
 
-    /* #region Drawing Methods */
     /**
-     * Paint the component
+     * Paints the game's components
+     * the background, the UI line, the game itself
+     * and the shield and supershot if they are active
      * 
      * @param g
      */
@@ -192,7 +195,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Draw the game
+     * Draws the game itself
      * 
      * @param g
      */
@@ -259,7 +262,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Draw the game over screen
+     * Draws the game over screen
      * 
      * @param g
      */
@@ -287,7 +290,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Draw the start screen
+     * Draws the start screen
      * 
      * @param g
      */
@@ -313,11 +316,9 @@ public class Board extends JPanel implements ActionListener {
         g.setFont(large);
         g.drawString(title, (B_WIDTH - fmLarge.stringWidth(title)) / 2, B_HEIGHT / 2 - 60);
     }
-    /* #endregion */
 
-    /* #region Sound Methods */
     /**
-     * Play the music
+     * Plays the music
      * 
      * @param i
      */
@@ -328,7 +329,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Stop the music
+     * Stops the music
      */
     public void stopMusic() {
         sound.stop();
@@ -343,10 +344,12 @@ public class Board extends JPanel implements ActionListener {
         sound.setFile(i);
         sound.play();
     }
-    /* #endregion */
 
     /**
      * Handle the action event
+     * can be also known as an
+     * update method. Handles everything
+     * that happens in the game.
      * 
      * @param e
      */
@@ -401,8 +404,6 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    /* #region Update methods */
-
     /**
      * Update the space ship
      */
@@ -444,6 +445,9 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Update the alien particles
+     */
     private void updateAlienParticles() {
         for (Alien alien : aliens) {
             List<Particle> particles = alien.getParticles();
@@ -460,7 +464,8 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Update the aliens
+     * Update the aliens and spawn new ones
+     * also set the alien count.
      */
     private void updateAliens() {
         ListIterator<Alien> itr = aliens.listIterator();
@@ -483,7 +488,9 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Update the bosses
+     * Update the bosses and spawn new ones
+     * also set the boss life. If the player's
+     * level is a multiple of 5, spawn a boss.
      */
     private void updateBosses() {
         ListIterator<Boss> itr = bosses.listIterator();
@@ -561,7 +568,8 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Update the lives
+     * Update the lives and the hearts
+     * sprites.
      */
     private void updateLives() {
         if (lives == 0) {
@@ -577,7 +585,9 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Reset the player
+     * Reset the player after dying
+     * and reset the aliens to a random position
+     * on the right side of the screen.
      */
     private void resetPlayer() {
         spaceShip = new SpaceShip();
@@ -599,7 +609,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Leveling up
+     * Leveling up depending on the score
      */
     private int levelUp(int score) {
         int level = 0;
@@ -614,12 +624,10 @@ public class Board extends JPanel implements ActionListener {
         return level;
     }
 
-    /* #endregion */
-
     // * Collisions
 
     /**
-     * Check for collisions
+     * Check for collisions between the game's components
      */
     private void checkCollisions() {
 
@@ -629,6 +637,7 @@ public class Board extends JPanel implements ActionListener {
         List<Missile> missiles = spaceShip.getMissiles();
 
         // * Check for collisions between the space ship and the aliens
+        // * If the player is not invincible, the aliens will kill the player.
         if (!invincible) {
             for (Alien alien : aliens) {
                 Rectangle rAlien = alien.getBounds();
@@ -647,6 +656,7 @@ public class Board extends JPanel implements ActionListener {
         }
 
         // * Check for collisions between the space ship and the bosses
+        // * If the player is not invincible, the bosses will kill the player.
         if (!invincible) {
             for (Boss boss : bosses) {
                 Rectangle rBoss = boss.getBounds();
@@ -664,6 +674,8 @@ public class Board extends JPanel implements ActionListener {
         }
 
         // * Check for collisions between the missiles and the aliens
+        // * If the player is not in supershot mode, the aliens will die and the player
+        // * will get a point.
         if (!superShot) {
             for (Missile missile : missiles) {
                 Rectangle rMissile = missile.getBounds();
@@ -699,6 +711,7 @@ public class Board extends JPanel implements ActionListener {
         }
 
         // * Check for collisions between the missiles and the bosses
+        // * If the player is not in supershot mode, the bosses will lose a life.
         if (!superShot) {
             for (Missile missile : missiles) {
                 Rectangle rMissile = missile.getBounds();
@@ -721,6 +734,9 @@ public class Board extends JPanel implements ActionListener {
         }
 
         // * Check for collisions between the space ship and the power ups
+
+        // * If the player collides with a shield, the player will be invincible for 5
+        // seconds.
         for (Shield shield : shields) {
             Rectangle rShield = shield.getResizedBounds();
             if (rSpaceShip.intersects(rShield)) {
@@ -730,6 +746,10 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
+        // * If the player collides with a fire, the player will be in supershot mode
+        // for 5 seconds.
+        // * In supershot mode, the player's missiles will go through the aliens and
+        // kill them.
         for (Fire fire : fires) {
             Rectangle rFire = fire.getResizedBounds();
             if (rSpaceShip.intersects(rFire)) {
@@ -739,6 +759,7 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
+        // * If the player collides with a bomb, all the aliens on screen will die.
         for (Bomb bomb : bombs) {
             Rectangle rBomb = bomb.getResizedBounds();
             if (rSpaceShip.intersects(rBomb)) {
@@ -814,9 +835,9 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    /* #region Game logic methods */
     /**
-     * Check if the game is still running
+     * Check if the game is still running,
+     * if not, stop the timer.
      */
     private void ingame() {
         if (!ingame) {
@@ -825,7 +846,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     /**
-     * Restart the game
+     * Restart the game, reset all the variables.
      */
     private void restart() {
         spaceShip = new SpaceShip();
@@ -878,8 +899,12 @@ public class Board extends JPanel implements ActionListener {
         }
         pause = !pause;
     }
-    /* #endregion */
 
+    // * Power ups
+
+    /**
+     * Explode all the aliens on screen
+     */
     private void explosion() {
         for (Alien alien : aliens) {
             alien.setVisible(false);
@@ -893,6 +918,9 @@ public class Board extends JPanel implements ActionListener {
         playSE(4);
     }
 
+    /**
+     * Make the player invincible for 5 seconds
+     */
     private void invincible() {
         invincible = true;
         Timer invincibleTimer = new Timer(5000, new ActionListener() {
@@ -905,6 +933,10 @@ public class Board extends JPanel implements ActionListener {
         invincibleTimer.start();
     }
 
+    /**
+     * Make the player in supershot mode for 5 seconds
+     * the player's missiles will go through the aliens and kill them.
+     */
     private void powershot() {
         superShot = true;
 
@@ -919,6 +951,10 @@ public class Board extends JPanel implements ActionListener {
     }
 
     // * Key events
+
+    /**
+     * Key adapter class
+     */
     private class TAdapter extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
